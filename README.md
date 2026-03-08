@@ -87,7 +87,7 @@ Le projet est entièrement dockerisé pour faciliter le déploiement et garantir
 2. **Lancer l'infrastructure :**
 
    ```bash
-   docker compose up --build
+   docker-compose up --build
    ```
 
 ### Services disponibles
