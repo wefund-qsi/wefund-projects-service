@@ -6,7 +6,7 @@ Ce dépôt contient le code du microservice responsable de la gestion des projet
 
 | Propriété      | Valeur                                                               |
 |----------------|----------------------------------------------------------------------|
-| Base URL (dev) | `http://localhost:3000/api`                                          |
+| Base URL (dev) | `http://localhost:3000`                                          |
 | Spécifications | [Voir le contrat d'API détaillé (API_CONTRAT.md)](./API_CONTRAT.md) |
 
 ---
@@ -112,7 +112,7 @@ Un dossier `/postman` est inclus à la racine du dépôt. Il contient les collec
 
 1. **Ouvrir Postman** (Desktop Agent ou Application).
 2. **Importer la collection** : Fichier > Import > Sélectionner le fichier `.json` présent dans le dossier `/postman`.
-3. **Configurer l'environnement** : Assurez-vous que l'URL pointe vers `http://localhost:3000/api`.
+3. **Configurer l'environnement** : Assurez-vous que l'URL pointe vers `http://localhost:3000`.
 4. **Exécuter les requêtes** : Les requêtes sont organisées par User Stories (US). Vous pouvez tester la création, la lecture et la validation des données en un clic.
 
 ---
