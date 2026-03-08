@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -9,6 +10,14 @@ import { ProjectsModule } from './projects/projects.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+
+    JwtModule.register({
+      global: true,
+      secret:
+        process.env.JWT_SECRET ||
+        'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.',
+      signOptions: { expiresIn: '1h' },
     }),
     
     TypeOrmModule.forRootAsync({

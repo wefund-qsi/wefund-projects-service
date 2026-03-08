@@ -1,16 +1,18 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { ProjectsService } from '../application/projects.service';
 import { CreateProjectDto } from '../dto/create-project.dto';
+import { AuthGuard } from '../../auth/auth.guard';
 
 @Controller('projets')
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Post()
-  async create(@Body() createProjectDto: CreateProjectDto) {
-    // Simulation du porteurId 
-    const mockPorteurId = "cm9x8y7z6w5v4u3t2s1r0q"; 
+  @UseGuards(AuthGuard)
+  async create(@Body() createProjectDto: CreateProjectDto, @Request() req: any) {
+    // Récupérer le porteurId depuis le token JWT
+    const porteurId = req.user.sub;
     
-    return await this.projectsService.create(createProjectDto, mockPorteurId);
+    return await this.projectsService.create(createProjectDto, porteurId);
   }
 }
