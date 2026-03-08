@@ -92,7 +92,40 @@
           "path": ["campagnes", "{{campagneId}}"]
         }
       }
+    },
+    {
+    "name": "PATCH - Modifier campagne (AUTH)",
+    "request": {
+        "method": "PATCH",
+        "header": [
+        {
+            "key": "Authorization",
+            "value": "Bearer dummy-token",
+            "type": "text"
+        },
+        {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+        }
+        ],
+        "body": {
+        "mode": "raw",
+        "raw": "{\n  \"titre\": \"Équiper 75 enfants en laptops coding\",\n  \"objectif\": 11250,\n  \"description\": \"75 laptops + tablettes pour ateliers code IA\"\n}",
+        "options": {
+            "raw": { "language": "json" }
+        }
+        },
+        "url": {
+        "raw": "http://localhost:3000/campagnes/{{campagneId}}",
+        "protocol": "http",
+        "host": ["localhost"],
+        "port": "3000",
+        "path": ["campagnes", "{{campagneId}}"]
+        }
     }
+    }
+
   ],
   "variable": [
     {

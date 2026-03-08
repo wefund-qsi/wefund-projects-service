@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CampagneEntity, StatutCampagne } from './entities/campagne.entity';
 import { CreateCampagneDto } from './dto/create-campagne.dto';
 import { CampagneResponseDto } from './dto/campagne-response.dto';
 import { ProjetService } from '../projet/projet.service';
+import { UpdateCampagneDto } from './dto/update-campagne.dto';
 
 const MOCK_PORTEUR_ID = "cm9x8y7z6w5v4u3t2s1r0q";
 
@@ -62,6 +63,38 @@ export class CampagneService {
     
     return this.entityToDto(campagne);
   }
+
+  async update(
+    id: string, 
+    updateCampagneDto: UpdateCampagneDto, 
+    porteurId: string
+    ): Promise<CampagneResponseDto> {
+    const campagne = await this.campagneRepository.findOne({
+        where: { id },
+        relations: ['projet']
+    });
+    
+    if (!campagne) {
+        throw new NotFoundException(`Campagne ${id} non trouvée`);
+    }
+
+    if (campagne.statut !== StatutCampagne.BROUILLON) {
+        throw new ForbiddenException('Seules les campagnes BROUILLON peuvent être modifiées');
+    }
+
+    if (campagne.projet.porteurId !== porteurId) {
+        throw new ForbiddenException('Non propriétaire de cette campagne');
+    }
+
+    if (updateCampagneDto.titre) campagne.titre = updateCampagneDto.titre;
+    if (updateCampagneDto.description) campagne.description = updateCampagneDto.description;
+    if (updateCampagneDto.objectif) campagne.objectif = updateCampagneDto.objectif;
+    if (updateCampagneDto.dateFin) campagne.dateFin = new Date(updateCampagneDto.dateFin);
+
+    const updatedCampagne = await this.campagneRepository.save(campagne);
+    return this.entityToDto(updatedCampagne);
+}
+
 
   private entityToDto(campagne: CampagneEntity): CampagneResponseDto {
     return {

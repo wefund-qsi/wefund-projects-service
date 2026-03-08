@@ -37,14 +37,14 @@ Les routes `GET` publiques (liste et détail des projets/campagnes) sont accessi
 
 #### Gestion des projets
 
-- [x] **US1 — Créer un projet** (Réalisé)
-- [x] US4 — Consulter les projets (liste + détail)
+- [x] **US1 — Créer un projet** [Réalisé]
+- [x] **US4 — Consulter les projets (liste + détail)** [Réalisé]
 
 #### Gestion des campagnes
 
-- [ ] US2 — Créer une campagne de financement
-- [ ] US3 — Modifier une campagne (brouillon uniquement)
-- [ ] US4 — Consulter les campagnes
+- [x] **US2 — Créer une campagne de financement**
+- [x] **US3 — Modifier une campagne (brouillon uniquement)** [Réalisé]
+- [x] **US4 — Consulter les campagnes** [Réalisé]
 - [ ] US5 — Clôture automatique d'une campagne à échéance
 - [ ] US6 — Publier des actualités sur une campagne
 - [ ] US7 — Consulter les statistiques d'une campagne
