@@ -6,7 +6,7 @@ Ce dépôt contient le code du microservice responsable de la gestion des projet
 
 | Propriété      | Valeur                                                               |
 |----------------|----------------------------------------------------------------------|
-| Base URL (dev) | `http://localhost:3000`                                          |
+| Base URL (dev) | `http://localhost:3000/api`                                          |
 | Spécifications | [Voir le contrat d'API détaillé (API_CONTRAT.md)](./API_CONTRAT.md) |
 
 ---
@@ -92,7 +92,7 @@ Le projet est entièrement dockerisé pour faciliter le déploiement et garantir
 
 ### Services disponibles
 
-- **API NestJS** : accessible sur `http://localhost:3000`
+- **API NestJS** : accessible sur `http://localhost:3000/`
 - **PostgreSQL** : tourne sur le port `5433` (externe) / `5432` (interne)
 - **pgAdmin** : disponible pour la gestion de la base de données
 
@@ -100,7 +100,7 @@ Le projet est entièrement dockerisé pour faciliter le déploiement et garantir
 
 ##  Vérification
 
-Une fois les conteneurs lancés, ouvrez votre navigateur et accédez à `http://localhost:3000/api`. Vous devriez recevoir une réponse confirmant que l'API est opérationnelle.
+Une fois les conteneurs lancés, ouvrez votre navigateur et accédez à `http://localhost:3000/`. Vous devriez recevoir une réponse confirmant que l'API est opérationnelle.
 
 ---
 
@@ -121,39 +121,31 @@ Un dossier `/postman` est inclus à la racine du dépôt. Il contient les collec
 
 Le microservice suit une architecture modulaire NestJS, séparant les responsabilités par domaine :
 
-```plaintext
-wefund-projects-service/
-├── postman/                      # Postman collection for API testing
-│   └── US_Projet.json
-│
+```plaintextwefund-projects-service/ 
+├
+wefund-projects-service/ 
+├── postman/
+│   └── US_Projet.json      # Collection Postman pour les tests
 ├── src/
-│   ├── config/                   # Application configuration
-│
-│   ├── modules/
-│   │   └── projet/               # Project domain module
-│   │       ├── dto/              # Data Transfer Objects
-│   │       │   ├── projet.ts
-│   │       │   └── UpdateProjetDto.ts
-│   │       │
-│   │       ├── response-projet/  # Response models
-│   │       │   └── response-projet.ts
-│   │       │
-│   │       ├── entities/         # Database entities (TypeORM)
-│   │       │   └── projet.entity.ts
-│   │       │
-│   │       ├── projet.controller.ts   # REST API endpoints
-│   │       ├── projet.service.ts      # Business logic
-│   │       ├── projet.module.ts       # NestJS module definition
-│   │       │
-│   │       └── *.spec.ts              # Unit tests
-│   │
-│   ├── app.module.ts            # Root application module
-│   └── main.ts                  # Application bootstrap
-│
-├── Dockerfile                   # Docker image definition
-├── docker-compose.yml           # Service orchestration (API + DB)
-│
-└── README.md
+│   ├── app.module.ts
+│   ├── main.ts
+│   ├── config/
+│   │   └── database.config.ts
+│   └── modules/
+│       └── projet/
+│           ├── projet.controller.spec.ts
+│           ├── projet.controller.ts
+│           ├── projet.module.ts
+│           ├── projet.service.spec.ts
+│           ├── projet.service.ts
+│           ├── dto/
+│           │   └── create-projet/
+│           │       ├── create-projet.spec.ts
+│           │       └── create-projet.ts
+│           └── entities/
+│               ├── projet.entity.spec.ts
+│               └── projet.entity.ts
+
 ```
 
 ---

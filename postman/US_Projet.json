@@ -24,7 +24,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"titre\": \"Nettoyage des plages\",\n  \"description\": \"Nettoyage des côtes pour protéger la faune marine\",\n  \"photo\": \"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400\"\n}",
+          "raw": "{\n  \"titre\": \"Nettoyage des plages\",\n  \"description\": \"Nettoyage mensuel des côtes bretonnes pour protéger la faune marine et sensibiliser les vacanciers à l'écologie. Action collective avec ramassage des déchets plastiques et ateliers éducatifs.\",\n  \"photo\": \"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400\"\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -58,7 +58,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"titre\": \"Cours d'informatique\",\n  \"description\": \"Apprendre le code aux enfants des quartiers\",\n  \"photo\": \"https://images.unsplash.com/photo-1524178232363-933d95a85b42?w=400\"\n}",
+          "raw": "{\n  \"titre\": \"Cours d'informatique\",\n  \"description\": \"Apprendre le code aux enfants des quartiers défavorisés à travers des ateliers pratiques. Formation Scratch, Python et développement web pour initier 50 jeunes par an à l'informatique.\",\n  \"photo\": \"https://images.unsplash.com/photo-1524178232363-933d95a85b42?w=400\"\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -93,6 +93,60 @@
       "request": {
         "method": "GET",
         "header": [],
+        "url": {
+          "raw": "http://localhost:3000/projets/{{projetId}}",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["projets", "{{projetId}}"]
+        }
+      }
+    },
+    {
+      "name": "UPDATE - Modifier projet",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer dummy-token",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titre\": \"Nettoyage des plages (MAJ)\",\n  \"photo\": \"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/projets/{{projetId}}",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["projets", "{{projetId}}"]
+        }
+      }
+    },
+    {
+      "name": "DELETE - Supprimer projet",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer dummy-token",
+            "type": "text"
+          }
+        ],
         "url": {
           "raw": "http://localhost:3000/projets/{{projetId}}",
           "protocol": "http",

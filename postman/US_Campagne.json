@@ -1,0 +1,70 @@
+{
+  "info": {
+    "_postman_id": "campagne-test",
+    "name": "WeFund-Campagnes",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "API Campagnes WeFund - Cours d'informatique"
+  },
+  "item": [
+    {
+      "name": "CREATE - Équiper 50 enfants laptops",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer dummy-token",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titre\": \"Équiper 50 enfants en laptops coding\",\n  \"description\": \"50 laptops + logiciels pour nos ateliers code. Objectif : former 100% des inscrits dès septembre 2026 ! Chaque don = 1h de code pour un enfant.\",\n  \"objectif\": 7500,\n  \"dateFin\": \"2026-09-30T23:59:59.999Z\",\n  \"projetId\": \"{{projetId}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/campagnes",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["campagnes"]
+        }
+      }
+    },
+    {
+      "name": "GET - Vérifier campagne créée",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/campagnes/{{campagneId}}",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["campagnes", "{{campagneId}}"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "projetId",
+      "value": "f831d590-5ce3-4d77-976d-6c8bc62712ec",
+      "description": "ID projet Cours d'informatique (porteurId: cm9x8y7z6w5v4u3t2s1r0q)"
+    },
+    {
+      "key": "campagneId",
+      "value": "copie-id-campagne-ici",
+      "description": "Copie l'ID retourné par POST /campagnes"
+    }
+  ]
+}
