@@ -5,9 +5,51 @@
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "27368499"
   },
+  "variable": [
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
   "item": [
     {
-      "name": "create-project",
+      "name": "create-project (avec token -> 201)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"titre\": \"Nettoyage des plages\",\r\n  \"description\": \"Une description qui fait plus de dix caractères.\",\r\n  \"photo\": \"https://example.com/photo.jpg\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/projets",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "projets"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "create-project (sans token -> 401)",
       "request": {
         "method": "POST",
         "header": [],
