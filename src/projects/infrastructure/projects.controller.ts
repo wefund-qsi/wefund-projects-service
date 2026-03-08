@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body,Param } from '@nestjs/common';
+import { Controller, Post, Get, Delete,HttpCode, HttpStatus, Body,Param } from '@nestjs/common';
 import { ProjectsService } from '../application/projects.service';
 import { CreateProjectDto } from '../dto/create-project.dto';
 
@@ -22,5 +22,11 @@ export class ProjectsController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return await this.projectsService.findOne(id);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT) 
+  async remove(@Param('id') id: string) {
+    await this.projectsService.remove(id);
   }
 }

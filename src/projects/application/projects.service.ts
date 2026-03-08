@@ -35,5 +35,13 @@ export class ProjectsService {
     throw new NotFoundException(`Projet ${id} non trouvé`);
   }
   return project;
+  }
+
+  async remove(id: string): Promise<void> {
+  const result = await this.projectRepository.delete({ id });
+  
+  if (result.affected === 0) {
+    throw new NotFoundException(`Projet ${id} non trouvé`);
+  }
 }
 }
