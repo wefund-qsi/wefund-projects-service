@@ -42,6 +42,27 @@ export class CampagneService {
     return this.entityToDto(savedCampagne);
   }
 
+  async findAll(): Promise<CampagneResponseDto[]> {
+    const campagnes = await this.campagneRepository.find({
+        relations: ['projet'], // Inclut les infos projet
+        order: { createdAt: 'DESC' }
+    });
+    return campagnes.map(c => this.entityToDto(c));
+    }
+
+    async findOne(id: string): Promise<CampagneResponseDto> {
+    const campagne = await this.campagneRepository.findOne({
+        where: { id },
+        relations: ['projet']
+    });
+    
+    if (!campagne) {
+        throw new NotFoundException(`Campagne ${id} non trouvée`);
+    }
+    
+    return this.entityToDto(campagne);
+  }
+
   private entityToDto(campagne: CampagneEntity): CampagneResponseDto {
     return {
       id: campagne.id,

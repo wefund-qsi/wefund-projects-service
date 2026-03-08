@@ -3,11 +3,11 @@
     "_postman_id": "campagne-test",
     "name": "WeFund-Campagnes",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "API Campagnes WeFund - Cours d'informatique"
+    "description": "API Campagnes WeFund - CREATE + GET ALL + GET ONE (PUBLIC)"
   },
   "item": [
     {
-      "name": "CREATE - Équiper 50 enfants laptops",
+      "name": "CREATE - Nouvelle campagne (AUTH)",
       "request": {
         "method": "POST",
         "header": [
@@ -41,7 +41,46 @@
       }
     },
     {
-      "name": "GET - Vérifier campagne créée",
+      "name": "GET ALL - Toutes les campagnes (PUBLIC)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Au moins 1 campagne\", function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('array');",
+              "    pm.expect(jsonData.length).to.be.above(0);",
+              "});",
+              "",
+              "// Sauvegarde le 1er ID pour test suivant",
+              "if (pm.response.json().length > 0) {",
+              "    pm.collectionVariables.set(\"campagneId\", pm.response.json()[0].id);",
+              "    console.log(\"campagneId sauvée: \" + pm.response.json()[0].id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/campagnes",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["campagnes"]
+        }
+      }
+    },
+    {
+      "name": "GET ONE - Campagne spécifique (PUBLIC)",
       "request": {
         "method": "GET",
         "header": [],
@@ -59,12 +98,12 @@
     {
       "key": "projetId",
       "value": "f831d590-5ce3-4d77-976d-6c8bc62712ec",
-      "description": "ID projet Cours d'informatique (porteurId: cm9x8y7z6w5v4u3t2s1r0q)"
+      "description": "ID projet Cours d'informatique"
     },
     {
       "key": "campagneId",
-      "value": "copie-id-campagne-ici",
-      "description": "Copie l'ID retourné par POST /campagnes"
+      "value": "",
+      "description": "AUTO-rempli par GET ALL (test script)"
     }
   ]
 }

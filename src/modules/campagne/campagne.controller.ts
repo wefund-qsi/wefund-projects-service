@@ -18,6 +18,15 @@ export class CampagneController {
     const porteurId = this.extractPorteurId(authHeader);
     return this.campagneService.create(createCampagneDto, porteurId);
   }
+  @Get()
+  findAll() {
+    return this.campagneService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.campagneService.findOne(id);
+  }
 
   private extractPorteurId(authHeader: string): string {
     if (!authHeader?.startsWith('Bearer ')) {
