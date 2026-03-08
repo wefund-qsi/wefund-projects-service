@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Project } from '../domain/project.entity';
 import { CreateProjectDto } from '../dto/create-project.dto';
+import { NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class ProjectsService {
@@ -22,6 +23,17 @@ export class ProjectsService {
   async findAll(): Promise<Project[]> {
   return await this.projectRepository.find({
     order: { createdAt: 'DESC' }
+    });
+  }
+
+  async findOne(id: string): Promise<Project> {
+  const project = await this.projectRepository.findOne({
+    where: { id }
   });
+  
+  if (!project) {
+    throw new NotFoundException(`Projet ${id} non trouvé`);
+  }
+  return project;
 }
 }
