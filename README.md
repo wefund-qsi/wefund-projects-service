@@ -59,7 +59,7 @@ Les routes `GET` publiques (liste et détail des projets/campagnes) sont accessi
 
 ## Règles de gestion
 
-- [ ] RG1 — Une campagne possède au minimum : titre, description, objectif financier, date de fin, porteur identifié
+- [x] **RG1 — Une campagne possède au minimum : titre, description, objectif financier, date de fin, porteur identifié**
 - [x] **RG2 — Un projet possède au minimum : titre, description, photo** (Implémenté)
 - [ ] RG3 — Une campagne ne peut plus être modifiée après publication
 - [ ] RG4 — Statuts possibles : `BROUILLON`, `EN_ATTENTE`, `ACTIVE`, `REUSSIE`, `ECHOUEE`, `REFUSEE`
@@ -123,28 +123,45 @@ Le microservice suit une architecture modulaire NestJS, séparant les responsabi
 
 ```plaintextwefund-projects-service/ 
 ├
-wefund-projects-service/ 
+wefund-projects-service/
 ├── postman/
-│   └── US_Projet.json      # Collection Postman pour les tests
+│   ├── US_Campagne.json              # Collection Postman pour tester les endpoints Campagne
+│   └── US_Projet.json                # Collection Postman pour tester les endpoints Projet
+│
 ├── src/
-│   ├── app.module.ts
-│   ├── main.ts
+│   ├── app.module.ts                 # Module racine de l'application
+│   ├── main.ts                       # Point d'entrée de l'application
+│   │
 │   ├── config/
-│   │   └── database.config.ts
+│   │   └── database.config.ts        # Configuration de la base de données
+│   │
 │   └── modules/
-│       └── projet/
-│           ├── projet.controller.spec.ts
+│       ├── campagne/                 # Module de gestion des campagnes
+│       │   ├── dto/                  # Objets de transfert de données
+│       │   │   ├── create-campagne.dto.ts
+│       │   │   ├── update-campagne.dto.ts
+│       │   │   └── campagne-response.dto.ts
+│       │   ├── entities/             # Entités TypeORM liées aux campagnes
+│       │   │   └── campagne.entity.ts
+│       │   ├── campagne.controller.ts
+│       │   ├── campagne.controller.spec.ts
+│       │   ├── campagne.service.ts
+│       │   ├── campagne.service.spec.ts
+│       │   └── campagne.module.ts
+│       │
+│       └── projet/                   # Module de gestion des projets
+│           ├── dto/                  # DTOs liés aux projets
+│           ├── entities/             # Entités TypeORM liées aux projets
 │           ├── projet.controller.ts
-│           ├── projet.module.ts
-│           ├── projet.service.spec.ts
+│           ├── projet.controller.spec.ts
 │           ├── projet.service.ts
-│           ├── dto/
-│           │   └── create-projet/
-│           │       ├── create-projet.spec.ts
-│           │       └── create-projet.ts
-│           └── entities/
-│               ├── projet.entity.spec.ts
-│               └── projet.entity.ts
+│           ├── projet.service.spec.ts
+│           └── projet.module.ts
+│
+├── .env                              # Variables d'environnement
+├── Dockerfile                        # Image Docker du microservice
+├── docker-compose.yml                # Orchestration des services
+└── README.md             └── projet.entity.ts
 
 ```
 
