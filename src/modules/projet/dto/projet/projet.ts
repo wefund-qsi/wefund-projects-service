@@ -1,10 +1,10 @@
 import { IsString, IsNotEmpty, IsOptional, MinLength } from 'class-validator';
 
-export class CreateProjetDto {
+export class ProjetDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(3)
-  titre: string;  // ← Remplace "nom"
+  titre: string;  
 
   @IsString()
   @IsOptional()
@@ -12,5 +12,5 @@ export class CreateProjetDto {
 
   @IsString()
   @IsNotEmpty()
-  photo: string;  // URL photo
+  photo: string; 
 }

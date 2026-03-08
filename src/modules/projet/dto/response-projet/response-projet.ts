@@ -5,7 +5,7 @@ export class ProjetResponseDto {
   id: string;
 
   @IsString()
-  titre: string;  // ← Remplace "nom"
+  titre: string; 
 
   @IsString()
   description: string;
