@@ -59,7 +59,7 @@ Les routes `GET` publiques (liste et détail des projets/campagnes) sont accessi
 
 ## Règles de gestion
 
-- [x] **RG1 — Une campagne possède au minimum : titre, description, objectif financier, date de fin, porteur identifié**
+- [x] **RG1 — Une campagne possède au minimum : titre, description, objectif financier, date de fin, porteur identifié** (Implémenté)
 - [x] **RG2 — Un projet possède au minimum : titre, description, photo** (Implémenté)
 - [ ] RG3 — Une campagne ne peut plus être modifiée après publication
 - [ ] RG4 — Statuts possibles : `BROUILLON`, `EN_ATTENTE`, `ACTIVE`, `REUSSIE`, `ECHOUEE`, `REFUSEE`
@@ -122,19 +122,6 @@ Un dossier `/postman` est inclus à la racine du dépôt. Il contient les collec
 Le microservice suit une architecture modulaire NestJS, séparant les responsabilités par domaine :
 
 ```plaintext
-wefund-projects-service/
-├── postman/                # Collection Postman pour les tests
-├── src/
-│   ├── projects/           # Module de gestion des Projets
-│   │   ├── domain/         # Entités TypeORM (Project.entity.ts)
-│   │   ├── application/    # Logique métier (Services)
-│   │   ├── infrastructure/ # Points d'entrée (Controllers)
-│   │   ├── dto/            # Data Transfer Objects (Validation)
-│   │   └── projects.module.ts
-│   ├── app.module.ts       # Module racine et config TypeORM
-│   └── main.ts             # Initialisation de l'application
-├── docker-compose.yml      # Orchestration (API + DB + pgAdmin)
-├── Dockerfile              # Image Docker de l'API
 wefund-projects-service/
 ├── postman/                         # Collections Postman pour les tests
 │   ├── US_Campagne.json
