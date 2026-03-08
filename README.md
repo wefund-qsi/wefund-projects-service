@@ -1,19 +1,24 @@
 # Projet 1 : Microservice Projets & Campagnes — WeFund POC
 
-Ce dépôt contient le code du microservice responsable de la gestion des projets et des campagnes de financement pour la plateforme WeFund. 
+Ce dépôt contient le code du microservice responsable de la gestion des projets et des campagnes de financement pour la plateforme WeFund.
 
 ## Informations générales
 
-| Propriété      | Valeur                                                                |
-|----------------|-----------------------------------------------------------------------|
-| Base URL (dev) | `http://localhost:3000/api`                                           |
-| Spécifications | [Voir le contrat d'API détaillé (API_CONTRACT.md)](./API_CONTRACT.md) |
+| Propriété      | Valeur                                                               |
+|----------------|----------------------------------------------------------------------|
+| Base URL (dev) | `http://localhost:3000/api`                                          |
+| Spécifications | [Voir le contrat d'API détaillé (API_CONTRAT.md)](./API_CONTRAT.md) |
+
+---
 
 ## Authentification & Rôles
 
 L'authentification est déléguée au **microservice utilisateurs (Projet 2)**.
 Toutes les routes marquées 🔒 nécessitent un token JWT valide dans le header :
-`Authorization: Bearer <TOKEN>`
+
+```
+Authorization: Bearer <TOKEN>
+```
 
 Les routes `GET` publiques (liste et détail des projets/campagnes) sont accessibles sans token.
 
@@ -26,35 +31,118 @@ Les routes `GET` publiques (liste et détail des projets/campagnes) sont accessi
 | `ADMIN`        | Valide ou refuse les campagnes                |
 | `VISITEUR`     | Accès lecture seule, sans authentification    |
 
-### Fonctionnalités (User Stories)
+---
+
+## Fonctionnalités (User Stories)
 
 #### Gestion des projets
-[ ] US1 — Créer un projet
-[ ] US4 — Consulter les projets (liste + détail)
+
+- [x] **US1 — Créer un projet** (Réalisé)
+- [ ] US4 — Consulter les projets (liste + détail)
 
 #### Gestion des campagnes
-[ ] US2 — Créer une campagne de financement
-[ ] US3 — Modifier une campagne (brouillon uniquement)
-[ ] US4 — Consulter les campagnes
-[ ] US5 — Clôture automatique d'une campagne à échéance 
-[ ] US6 — Publier des actualités sur une campagne
-[ ] US7 — Consulter les statistiques d'une campagne
-[ ] US8 — Dupliquer une campagne terminée
+
+- [ ] US2 — Créer une campagne de financement
+- [ ] US3 — Modifier une campagne (brouillon uniquement)
+- [ ] US4 — Consulter les campagnes
+- [ ] US5 — Clôture automatique d'une campagne à échéance
+- [ ] US6 — Publier des actualités sur une campagne
+- [ ] US7 — Consulter les statistiques d'une campagne
+- [ ] US8 — Dupliquer une campagne terminée
 
 #### Modération (Admin)
-[ ] Valider une campagne (EN_ATTENTE → ACTIVE)
-[ ] Refuser une campagne (EN_ATTENTE → REFUSEE)
 
-### Règles de gestion
-[ ] RG1 — Une campagne possède au minimum : titre, description, objectif financier, date de fin, porteur identifié
-[ ] RG2 — Un projet possède au minimum : titre, description, photo
-[ ] RG3 — Une campagne ne peut plus être modifiée après publication
-[ ] RG4 — Statuts possibles : BROUILLON, EN_ATTENTE, ACTIVE, REUSSIE, ECHOUEE, REFUSEE
+- [ ] Valider une campagne (`EN_ATTENTE` → `ACTIVE`)
+- [ ] Refuser une campagne (`EN_ATTENTE` → `REFUSEE`)
 
+---
 
-## Récapitulatif des endpoints
+## Règles de gestion
 
-*Pour le détail des payloads (corps de requêtes) et des réponses, veuillez consulter le [Contrat d'API](./API_CONTRACT.md).*
+- [ ] RG1 — Une campagne possède au minimum : titre, description, objectif financier, date de fin, porteur identifié
+- [x] **RG2 — Un projet possède au minimum : titre, description, photo** (Implémenté)
+- [ ] RG3 — Une campagne ne peut plus être modifiée après publication
+- [ ] RG4 — Statuts possibles : `BROUILLON`, `EN_ATTENTE`, `ACTIVE`, `REUSSIE`, `ECHOUEE`, `REFUSEE`
+
+---
+
+##  Installation et Lancement
+
+Le projet est entièrement dockerisé pour faciliter le déploiement et garantir la cohérence de l'environnement.
+
+### Prérequis
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installé et lancé.
+- [Postman](https://www.postman.com/downloads/) pour tester les endpoints.
+
+### Démarrage rapide
+
+1. **Cloner le dépôt :**
+
+   ```bash
+   git clone https://github.com/votre-repo/wefund-projects-service.git
+   cd wefund-projects-service
+   ```
+
+2. **Lancer l'infrastructure :**
+
+   ```bash
+   docker compose up --build
+   ```
+
+### Services disponibles
+
+- **API NestJS** : accessible sur `http://localhost:3000/api`
+- **PostgreSQL** : tourne sur le port `5433` (externe) / `5432` (interne)
+- **pgAdmin** : disponible pour la gestion de la base de données
+
+---
+
+##  Vérification
+
+Une fois les conteneurs lancés, ouvrez votre navigateur et accédez à `http://localhost:3000/api`. Vous devriez recevoir une réponse confirmant que l'API est opérationnelle.
+
+---
+
+##  Tests avec Postman
+
+Un dossier `/postman` est inclus à la racine du dépôt. Il contient les collections permettant de tester l'ensemble des endpoints du microservice.
+
+### Procédure de test
+
+1. **Ouvrir Postman** (Desktop Agent ou Application).
+2. **Importer la collection** : Fichier > Import > Sélectionner le fichier `.json` présent dans le dossier `/postman`.
+3. **Configurer l'environnement** : Assurez-vous que l'URL pointe vers `http://localhost:3000/api`.
+4. **Exécuter les requêtes** : Les requêtes sont organisées par User Stories (US). Vous pouvez tester la création, la lecture et la validation des données en un clic.
+
+---
+
+##  Structure du Projet
+
+Le microservice suit une architecture modulaire NestJS, séparant les responsabilités par domaine :
+
+```plaintext
+wefund-projects-service/
+├── postman/                # Collection Postman pour les tests
+├── src/
+│   ├── projects/           # Module de gestion des Projets
+│   │   ├── domain/         # Entités TypeORM (Project.entity.ts)
+│   │   ├── application/    # Logique métier (Services)
+│   │   ├── infrastructure/ # Points d'entrée (Controllers)
+│   │   ├── dto/            # Data Transfer Objects (Validation)
+│   │   └── projects.module.ts
+│   ├── app.module.ts       # Module racine et config TypeORM
+│   └── main.ts             # Initialisation de l'application
+├── docker-compose.yml      # Orchestration (API + DB + pgAdmin)
+├── Dockerfile              # Image Docker de l'API
+└── README.md
+```
+
+---
+
+##  Récapitulatif des endpoints
+
+Pour le détail des payloads (corps de requêtes) et des réponses, veuillez consulter le [Contrat d'API](./API_CONTRAT.md).
 
 | Méthode | Route                          | Auth             | Description                       |
 |---------|--------------------------------|------------------|-----------------------------------|
@@ -74,6 +162,3 @@ Les routes `GET` publiques (liste et détail des projets/campagnes) sont accessi
 | `GET`   | `/campagnes/:id/stats`         | 🔒 PORTEUR/ADMIN | Statistiques d'une campagne       |
 | `POST`  | `/admin/campagnes/:id/valider` | 🔒 ADMIN         | Valider une campagne              |
 | `POST`  | `/admin/campagnes/:id/refuser` | 🔒 ADMIN         | Refuser une campagne              |
-
-
-
