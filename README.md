@@ -6,7 +6,7 @@ Ce dépôt contient le code du microservice responsable de la gestion des projet
 
 | Propriété      | Valeur                                                               |
 |----------------|----------------------------------------------------------------------|
-| Base URL (dev) | `http://localhost:3000/api`                                          |
+| Base URL (dev) | `http://localhost:3000`                                          |
 | Spécifications | [Voir le contrat d'API détaillé (API_CONTRAT.md)](./API_CONTRAT.md) |
 
 ---
@@ -38,7 +38,7 @@ Les routes `GET` publiques (liste et détail des projets/campagnes) sont accessi
 #### Gestion des projets
 
 - [x] **US1 — Créer un projet** (Réalisé)
-- [ ] US4 — Consulter les projets (liste + détail)
+- [x] US4 — Consulter les projets (liste + détail)
 
 #### Gestion des campagnes
 
@@ -92,7 +92,7 @@ Le projet est entièrement dockerisé pour faciliter le déploiement et garantir
 
 ### Services disponibles
 
-- **API NestJS** : accessible sur `http://localhost:3000/api`
+- **API NestJS** : accessible sur `http://localhost:3000`
 - **PostgreSQL** : tourne sur le port `5433` (externe) / `5432` (interne)
 - **pgAdmin** : disponible pour la gestion de la base de données
 
@@ -123,18 +123,36 @@ Le microservice suit une architecture modulaire NestJS, séparant les responsabi
 
 ```plaintext
 wefund-projects-service/
-├── postman/                # Collection Postman pour les tests
+├── postman/                      # Postman collection for API testing
+│   └── US_Projet.json
+│
 ├── src/
-│   ├── projects/           # Module de gestion des Projets
-│   │   ├── domain/         # Entités TypeORM (Project.entity.ts)
-│   │   ├── application/    # Logique métier (Services)
-│   │   ├── infrastructure/ # Points d'entrée (Controllers)
-│   │   ├── dto/            # Data Transfer Objects (Validation)
-│   │   └── projects.module.ts
-│   ├── app.module.ts       # Module racine et config TypeORM
-│   └── main.ts             # Initialisation de l'application
-├── docker-compose.yml      # Orchestration (API + DB + pgAdmin)
-├── Dockerfile              # Image Docker de l'API
+│   ├── config/                   # Application configuration
+│
+│   ├── modules/
+│   │   └── projet/               # Project domain module
+│   │       ├── dto/              # Data Transfer Objects
+│   │       │   ├── projet.ts
+│   │       │   └── UpdateProjetDto.ts
+│   │       │
+│   │       ├── response-projet/  # Response models
+│   │       │   └── response-projet.ts
+│   │       │
+│   │       ├── entities/         # Database entities (TypeORM)
+│   │       │   └── projet.entity.ts
+│   │       │
+│   │       ├── projet.controller.ts   # REST API endpoints
+│   │       ├── projet.service.ts      # Business logic
+│   │       ├── projet.module.ts       # NestJS module definition
+│   │       │
+│   │       └── *.spec.ts              # Unit tests
+│   │
+│   ├── app.module.ts            # Root application module
+│   └── main.ts                  # Application bootstrap
+│
+├── Dockerfile                   # Docker image definition
+├── docker-compose.yml           # Service orchestration (API + DB)
+│
 └── README.md
 ```
 
