@@ -18,4 +18,10 @@ export class ProjectsService {
     });
     return await this.projectRepository.save(project);
   }
+
+  async findAll(): Promise<Project[]> {
+  return await this.projectRepository.find({
+    order: { createdAt: 'DESC' }
+  });
+}
 }

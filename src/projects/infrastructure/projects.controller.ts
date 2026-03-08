@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Get, Body } from '@nestjs/common';
 import { ProjectsService } from '../application/projects.service';
 import { CreateProjectDto } from '../dto/create-project.dto';
 
@@ -12,5 +12,10 @@ export class ProjectsController {
     const mockPorteurId = "cm9x8y7z6w5v4u3t2s1r0q"; 
     
     return await this.projectsService.create(createProjectDto, mockPorteurId);
+  }
+
+  @Get()
+  async findAll() {
+    return await this.projectsService.findAll();
   }
 }
