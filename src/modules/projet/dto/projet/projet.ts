@@ -1,16 +1,19 @@
-import { IsString, IsNotEmpty, IsOptional, MinLength } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, MinLength, MaxLength, IsUrl } from 'class-validator';
 
 export class ProjetDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(3)
+  @MaxLength(100)
   titre: string;  
 
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
+  @MinLength(10)
+  @MaxLength(2000)
   description?: string;
 
-  @IsString()
+  @IsUrl()
   @IsNotEmpty()
   photo: string; 
 }

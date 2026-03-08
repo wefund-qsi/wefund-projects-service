@@ -13,6 +13,12 @@ export class ProjetResponseDto {
   @IsString()
   photo: string;
 
+  @IsString()
+  porteurId: string;        
+
   @IsDateString()
-  createdAt: Date;
+  createdAt: string;      
+
+  @IsDateString()
+  updatedAt: string;   
 }
