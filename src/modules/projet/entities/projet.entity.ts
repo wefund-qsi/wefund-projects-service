@@ -6,12 +6,12 @@ export class ProjetEntity {
   id: string;
 
   @Column({ length: 255 })
-  titre: string;  // ← Remplace "nom"
+  titre: string;  
 
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @Column({ length: 500 })  // URL ou chemin photo
+  @Column({ length: 500 })  
   photo: string;
 
   @Column()

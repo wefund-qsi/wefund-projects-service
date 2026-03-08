@@ -1,0 +1,113 @@
+{
+  "info": {
+    "_postman_id": "a805a237-f294-425e-9e77-732f36f220c8",
+    "name": "WeFund-Projets",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "API Projets WeFund - POST protégés, GET publics"
+  },
+  "item": [
+    {
+      "name": "CREATE - Nettoyage plages",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer dummy-token",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titre\": \"Nettoyage des plages\",\n  \"description\": \"Nettoyage des côtes pour protéger la faune marine\",\n  \"photo\": \"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/projets",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["projets"]
+        }
+      }
+    },
+    {
+      "name": "CREATE - Cours informatique",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer dummy-token",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titre\": \"Cours d'informatique\",\n  \"description\": \"Apprendre le code aux enfants des quartiers\",\n  \"photo\": \"https://images.unsplash.com/photo-1524178232363-933d95a85b42?w=400\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/projets",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["projets"]
+        }
+      }
+    },
+    {
+      "name": "GET - Tous les projets",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/projets",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["projets"]
+        }
+      }
+    },
+    {
+      "name": "GET - Projet spécifique",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/projets/{{projetId}}",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["projets", "{{projetId}}"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "projetId",
+      "value": "550e8400-e29b-41d4-a716-426655440000",
+      "description": "Copie l'ID d'un projet créé ici (après POST)"
+    }
+  ]
+}

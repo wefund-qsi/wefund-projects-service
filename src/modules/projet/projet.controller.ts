@@ -1,5 +1,5 @@
-import { Controller, Get, Param, ParseUUIDPipe, Headers, UnauthorizedException, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
-import { ProjetService } from './projet.service';
+import { Controller, Get, Param, ParseUUIDPipe, Post, Body, HttpCode, HttpStatus, Headers, UnauthorizedException } from '@nestjs/common';
+import { ProjetService } from './projet.service';        // ← Chemin corrigé
 import { CreateProjetDto } from './dto/create-projet/create-projet';
 import { ProjetResponseDto } from './dto/response-projet/response-projet';
 
@@ -12,7 +12,7 @@ export class ProjetController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(
-    @Body() createProjetDto: CreateProjetDto,        
+    @Body() createProjetDto: CreateProjetDto,
     @Headers('authorization') authHeader: string,
   ): Promise<ProjetResponseDto> {
     const porteurId = this.extractPorteurId(authHeader);
@@ -20,18 +20,13 @@ export class ProjetController {
   }
 
   @Get()
-  async findAll(@Headers('authorization') authHeader: string): Promise<ProjetResponseDto[]> {
-    const porteurId = this.extractPorteurId(authHeader);
-    return this.projetService.findAll(porteurId);
+  async findAll(): Promise<ProjetResponseDto[]> {
+    return this.projetService.findAll(); 
   }
 
   @Get(':id')
-  async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Headers('authorization') authHeader: string,
-  ): Promise<ProjetResponseDto> {
-    const porteurId = this.extractPorteurId(authHeader);
-    return this.projetService.findOne(id, porteurId);
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<ProjetResponseDto> {
+    return this.projetService.findOne(id);  
   }
 
   private extractPorteurId(authHeader: string): string {

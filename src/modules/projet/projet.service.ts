@@ -5,7 +5,6 @@ import { ProjetEntity } from './entities/projet.entity';
 import { CreateProjetDto } from './dto/create-projet/create-projet';
 import { ProjetResponseDto } from './dto/response-projet/response-projet';
 
-
 const MOCK_PORTEUR_ID = "cm9x8y7z6w5v4u3t2s1r0q";
 
 @Injectable()
@@ -38,11 +37,8 @@ export class ProjetService {
     };
   }
 
-  async findAll(porteurId: string): Promise<ProjetResponseDto[]> {
-    if (porteurId !== MOCK_PORTEUR_ID) {
-      throw new UnauthorizedException('Token invalide');
-    }
-    const projets = await this.projetRepository.find({ where: { porteurId } });
+  async findAll(): Promise<ProjetResponseDto[]> {
+    const projets = await this.projetRepository.find();  
     return projets.map(p => ({
       id: p.id,
       titre: p.titre,
@@ -52,11 +48,8 @@ export class ProjetService {
     }));
   }
 
-  async findOne(id: string, porteurId: string): Promise<ProjetResponseDto> {
-    if (porteurId !== MOCK_PORTEUR_ID) {
-      throw new UnauthorizedException('Token invalide');
-    }
-    const projet = await this.projetRepository.findOne({ where: { id, porteurId } });
+  async findOne(id: string): Promise<ProjetResponseDto> {
+    const projet = await this.projetRepository.findOne({ where: { id } });
     if (!projet) throw new NotFoundException(`Projet ${id} non trouvé`);
     return {
       id: projet.id,
