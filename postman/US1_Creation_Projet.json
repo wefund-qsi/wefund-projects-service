@@ -1,0 +1,176 @@
+{
+  "info": {
+    "_postman_id": "a805a237-f294-425e-9e77-732f36f220c8",
+    "name": "WeFund-Projets",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "27368499"
+  },
+  "variable": [
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "create-project (avec token -> 201)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"titre\": \"Nettoyage des plages\",\r\n  \"description\": \"Une description qui fait plus de dix caractères.\",\r\n  \"photo\": \"https://example.com/photo.jpg\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/projets",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "projets"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "create-project (sans token -> 401)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"titre\": \"Nettoyage des plages\",\r\n  \"description\": \"Une description qui fait plus de dix caractères.\",\r\n  \"photo\": \"https://example.com/photo.jpg\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/projets",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "projets"
+          ]
+        }
+      },
+      "response": []
+    },
+
+    {
+      "name": "GET ALL - Tous les projets (PUBLIC)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Au moins 1 projet\", function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('array');",
+              "    pm.expect(jsonData.length).to.be.above(0);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/projets",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["projets"]
+        }
+      }
+    },
+    {
+  "name": "GET ONE - Projet spécifique",
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "exec": [
+          "pm.test(\"Status code is 200\", function () {",
+          "    pm.response.to.have.status(200);",
+          "});",
+          "pm.test(\"Projet trouvé\", function () {",
+          "    const jsonData = pm.response.json();",
+          "    pm.expect(jsonData.id).to.exist;",
+          "    pm.expect(jsonData.titre).to.exist;",
+          "    pm.collectionVariables.set(\"projetId\", jsonData.id);",
+          "});"
+        ],
+        "type": "text/javascript"
+      }
+    }
+  ],
+  "request": {
+    "method": "GET",
+    "header": [],
+    "url": {
+      "raw": "http://localhost:3000/api/projets/{{projetId}}",
+      "protocol": "http",
+      "host": ["localhost"],
+      "port": "3000",
+      "path": ["projets", "{{projetId}}"]
+    }
+  }
+},
+{
+  "name": "DELETE - Supprimer projet",
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "exec": [
+          "pm.test(\"Status code is 204\", function () {",
+          "    pm.response.to.have.status(204);",
+          "});",
+          "pm.test(\"No content\", function () {",
+          "    pm.expect(pm.response.text()).to.be.empty;",
+          "});"
+        ],
+        "type": "text/javascript"
+      }
+    }
+  ],
+  "request": {
+    "method": "DELETE",
+    "header": [],
+    "url": {
+      "raw": "http://localhost:3000/api/projets/{{projetId}}",
+      "host": ["localhost"],
+      "port": "3000",
+      "path": ["api", "projets", "{{projetId}}"]
+    }
+  }
+}
+  ]
+}
