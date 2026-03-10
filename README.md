@@ -177,5 +177,3 @@ Pour le détail des payloads (corps de requêtes) et des réponses, veuillez con
 | `POST`  | `/campagnes/:id/actualites`    | 🔒 PORTEUR       | Publier une actualité             |
 | `GET`   | `/campagnes/:id/actualites`    | Public           | Lister les actualités             |
 | `GET`   | `/campagnes/:id/stats`         | 🔒 PORTEUR/ADMIN | Statistiques d'une campagne       |
-| `POST`  | `/admin/campagnes/:id/valider` | 🔒 ADMIN         | Valider une campagne              |
-| `POST`  | `/admin/campagnes/:id/refuser` | 🔒 ADMIN         | Refuser une campagne              |
