@@ -37,12 +37,12 @@ Les routes `GET` publiques (liste et détail des projets/campagnes) sont accessi
 
 #### Gestion des projets
 
-- [x] **US1 — Créer un projet** (Réalisé)
-- [ ] US4 — Consulter les projets (liste + détail)
+- [x] **US1 — Créer un projet** [Réalisé]
+- [x] **US4 — Consulter les projets (liste + détail)** [Réalisé]
 
 #### Gestion des campagnes
 
-- [ ] US2 — Créer une campagne de financement
+- [x] **US2 — Créer une campagne de financement** [Réalisé]
 - [ ] US3 — Modifier une campagne (brouillon uniquement)
 - [ ] US4 — Consulter les campagnes
 - [ ] US5 — Clôture automatique d'une campagne à échéance
@@ -59,7 +59,7 @@ Les routes `GET` publiques (liste et détail des projets/campagnes) sont accessi
 
 ## Règles de gestion
 
-- [ ] RG1 — Une campagne possède au minimum : titre, description, objectif financier, date de fin, porteur identifié
+- [x] **RG1 — Une campagne possède au minimum : titre, description, objectif financier, date de fin, porteur identifié** (Implémenté)
 - [x] **RG2 — Un projet possède au minimum : titre, description, photo** (Implémenté)
 - [ ] RG3 — Une campagne ne peut plus être modifiée après publication
 - [ ] RG4 — Statuts possibles : `BROUILLON`, `EN_ATTENTE`, `ACTIVE`, `REUSSIE`, `ECHOUEE`, `REFUSEE`
@@ -87,7 +87,7 @@ Le projet est entièrement dockerisé pour faciliter le déploiement et garantir
 2. **Lancer l'infrastructure :**
 
    ```bash
-   docker compose up --build
+   docker-compose up --build
    ```
 
 ### Services disponibles
@@ -123,19 +123,36 @@ Le microservice suit une architecture modulaire NestJS, séparant les responsabi
 
 ```plaintext
 wefund-projects-service/
-├── postman/                # Collection Postman pour les tests
+├── postman/                         # Collections Postman pour les tests
+│   ├── US_Campagne.json
+│   └── US_Creation_Projet.json
 ├── src/
-│   ├── projects/           # Module de gestion des Projets
-│   │   ├── domain/         # Entités TypeORM (Project.entity.ts)
-│   │   ├── application/    # Logique métier (Services)
-│   │   ├── infrastructure/ # Points d'entrée (Controllers)
-│   │   ├── dto/            # Data Transfer Objects (Validation)
+│   ├── campagnes/                   # Module de gestion des Campagnes
+│   │   ├── application/             # Logique métier
+│   │   │   └── campagnes.service.ts
+│   │   ├── domain/                  # Entités métier
+│   │   │   └── campagne.entity.ts
+│   │   ├── dto/                     # DTOs et validation
+│   │   │   └── create-campagne.dto.ts
+│   │   ├── infrastructure/          # Contrôleurs / points d’entrée
+│   │   │   └── campagne.controller.ts
+│   │   └── campagnes.module.ts
+│   ├── projects/                    # Module de gestion des Projets
+│   │   ├── application/             # Logique métier
+│   │   │   └── projects.service.ts
+│   │   ├── domain/                  # Entités métier
+│   │   │   └── project.entity.ts
+│   │   ├── dto/                     # DTOs et validation
+│   │   │   └── create-project.dto.ts
+│   │   ├── infrastructure/          # Contrôleurs / points d’entrée
+│   │   │   └── projects.controller.ts
 │   │   └── projects.module.ts
-│   ├── app.module.ts       # Module racine et config TypeORM
-│   └── main.ts             # Initialisation de l'application
-├── docker-compose.yml      # Orchestration (API + DB + pgAdmin)
-├── Dockerfile              # Image Docker de l'API
-└── README.md
+│   ├── app.module.ts                # Module racine et configuration globale
+│   └── main.ts                      # Point d’entrée de l’application
+├── .env                             # Variables d’environnement
+├── docker-compose.yml               # Orchestration Docker (si présent)
+├── Dockerfile                       # Image Docker de l’API (si présent)
+└── README.md                        # Documentation du projet
 ```
 
 ---
