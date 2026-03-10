@@ -166,13 +166,11 @@ Pour le détail des payloads (corps de requêtes) et des réponses, veuillez con
 | `POST`  | `/projets`                     | 🔒 PORTEUR       | Créer un projet                   |
 | `GET`   | `/projets`                     | Public           | Lister les projets                |
 | `GET`   | `/projets/:id`                 | Public           | Détail d'un projet                |
-| `PATCH` | `/projets/:id`                 | 🔒 PORTEUR       | Modifier un projet                |
 | `DELETE`| `/projets/:id`                 | 🔒 PORTEUR       | Supprimer un projet               |
 | `POST`  | `/campagnes`                   | 🔒 PORTEUR       | Créer une campagne                |
 | `GET`   | `/campagnes`                   | Public           | Lister les campagnes              |
 | `GET`   | `/campagnes/:id`               | Public           | Détail d'une campagne             |
 | `PATCH` | `/campagnes/:id`               | 🔒 PORTEUR       | Modifier une campagne (brouillon) |
-| `POST`  | `/campagnes/:id/soumettre`     | 🔒 PORTEUR       | Soumettre à validation            |
 | `POST`  | `/campagnes/:id/dupliquer`     | 🔒 PORTEUR       | Dupliquer une campagne terminée   |
 | `POST`  | `/campagnes/:id/actualites`    | 🔒 PORTEUR       | Publier une actualité             |
 | `GET`   | `/campagnes/:id/actualites`    | Public           | Lister les actualités             |
