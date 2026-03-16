@@ -44,45 +44,43 @@ export class CampagnesService {
     return await this.campagneRepository.save(campagne);
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS) 
-  async cloturerCampagnesTerminees(): Promise<void> {
-    this.logger.log('Vérification des campagnes arrivées à échéance...');
+ @Cron(CronExpression.EVERY_10_SECONDS) 
+  async closeExpiredCampaigns(): Promise<void> {
+    this.logger.log('Checking for expired campaigns...');
 
     const currentDate = new Date();
 
-    const campagnesACloturer = await this.campagneRepository.find({
+    const campaignsToClose = await this.campagneRepository.find({
       where: {
         statut: StatutCampagne.ACTIVE,
         dateFin: LessThanOrEqual(currentDate), 
       },
     });
 
-    if (campagnesACloturer.length === 0) {
-      this.logger.log('Aucune campagne à clôturer pour le moment.');
+    if (campaignsToClose.length === 0) {
+      this.logger.log('No campaigns to close at the moment.');
       return;
     }
 
-    this.logger.log(`${campagnesACloturer.length} campagne(s) à clôturer trouvée(s).`);
+    this.logger.log(`${campaignsToClose.length} campaign(s) to close found.`);
 
-    for (const campagne of campagnesACloturer) {
+    for (const campaign of campaignsToClose) {
       try {
-        const objectifAtteint = Number(campagne.montantCollecte) >= Number(campagne.objectif);
+        const isGoalReached = Number(campaign.montantCollecte) >= Number(campaign.objectif);
 
-        if (objectifAtteint) {
-          campagne.statut = StatutCampagne.REUSSIE;
+        if (isGoalReached) {
+          campaign.statut = StatutCampagne.REUSSIE;
         } else {
-          campagne.statut = StatutCampagne.ECHOUEE;
+          campaign.statut = StatutCampagne.ECHOUEE;
         }
 
-        await this.campagneRepository.save(campagne);
+        await this.campagneRepository.save(campaign);
         
-        this.logger.log(`Campagne [${campagne.id}] clôturée avec succès. Nouveau statut : ${campagne.statut}`);
-
-       
+        this.logger.log(`Campaign [${campaign.id}] closed successfully. New status: ${campaign.statut}`);
 
       } catch (error) {
         
-        this.logger.error(`Erreur lors de la clôture de la campagne [${campagne.id}]`, error.stack);
+        this.logger.error(`Error while closing campaign [${campaign.id}]`, error.stack);
       }
     }
   }
