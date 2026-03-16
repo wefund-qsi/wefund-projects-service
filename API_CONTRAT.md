@@ -2,8 +2,9 @@
 
 ## Ressource : Projets
 
-### `POST /projets` 🔒
+### `PUT /projets` 🔒
 > Crée un nouveau projet. **Rôle requis : PORTEUR**
+> Story 1 : En tant que porteur de projet, je peux créer un projet.
 
 **Corps de la requête**
 
@@ -23,86 +24,15 @@
   "titre": "Ma campagne innovante",
   "description": "Description détaillée de mon projet...",
   "photo": "https://example.com/photo.jpg",
-  "porteurId": "cm9x8y7z6w5v4u3t2s1r0q",
-  "createdAt": "2026-03-03T10:30:00.000Z",
-  "updatedAt": "2026-03-03T10:30:00.000Z"
+  "idPorteur": "cm9x8y7z6w5v4u3t2s1r0q",
+  "dateCreation": "2026-03-03T10:30:00.000Z",
+  "dateMiseAJour": "2026-03-03T10:30:00.000Z"
 }
 ```
 
 **Erreurs possibles**
 - `400`, Champ manquant ou invalide 
 - `401`, Token absent ou expiré     
-
-### `GET /projets`
-> Liste tous les projets. **Public — pas d'authentification requise**
-
-**Réponse `200 OK`**
-
-```json
-[
-  {
-    "id": "cm1q2r3s4t5u6v7w8x9y0z1a2",
-    "titre": "Ma campagne innovante",
-    "description": "Description détaillée...",
-    "photo": "https://example.com/photo.jpg",
-    "porteurId": "cm9x8y7z6w5v4u3t2s1r0q",
-    "createdAt": "2026-03-03T10:30:00.000Z",
-    "updatedAt": "2026-03-03T10:30:00.000Z"
-  }
-]
-```
-
-### `GET /projets/:id`
-> Détail d'un projet. **Public**
-
-**Réponse `200 OK`**
-
-```json
-{
-  "id": "cm1q2r3s4t5u6v7w8x9y0z1a2",
-  "titre": "Ma campagne innovante",
-  "description": "Description détaillée de mon projet...",
-  "photo": "https://example.com/photo.jpg",
-  "porteurId": "cm9x8y7z6w5v4u3t2s1r0q",
-  "createdAt": "2026-03-03T10:30:00.000Z",
-  "updatedAt": "2026-03-03T10:30:00.000Z"
-}
-```
-
-**Erreurs possibles**
-- `404`, Projet introuvable — `"Projet avec l'id xxx non trouvé"` |
-
-### `PATCH /projets/:id` 🔒
-> Modifie un projet existant. **Rôle requis : PORTEUR (propriétaire uniquement)**
-
-**Corps de la requête** — tous les champs sont optionnels
-
-```json
-{
-  "titre": "Nouveau titre",
-  "description": "Nouvelle description...",
-  "photo": "https://example.com/nouvelle-photo.jpg"
-}
-```
-
-**Réponse `200 OK`** — projet mis à jour (même structure que `GET /projets/:id`)
-
-**Erreurs possibles**
-- `400`, Champ invalide             
-- `401`, Non authentifié            
-- `403`, Non propriétaire du projet 
-- `404`, Projet introuvable         
-
-### `DELETE /projets/:id` 🔒
-> Supprime un projet. **Rôle requis : PORTEUR (propriétaire uniquement)**
-
-**Réponse `204 No Content`**
-
-**Erreurs possibles**
-- `401`, Non authentifié                                                
-- `403`, Non propriétaire                                               
-- `404`, Projet introuvable                                             
-- `409`, Le projet possède une campagne active — suppression impossible 
 
 ## Ressource : Campagnes
 
@@ -119,6 +49,7 @@
 
 ### `POST /campagnes` 🔒
 > Crée une campagne pour un projet existant. **Rôle requis : PORTEUR**
+> Story 2 : En tant que porteur de projet, je peux créer une campagne de financement.
 
 **Corps de la requête**
 
@@ -128,7 +59,7 @@
   "description": "Aidez-nous à lancer notre produit...", // string, requis, 10–2000 caractères
   "objectif": 5000,                                 // number, requis, > 0
   "dateFin": "2026-06-30T23:59:59.999Z",            // string, requis, date future ISO 8601
-  "projetId": "cm1q2r3s4t5u6v7w8x9y0z1a2"          // string, requis, ID projet du porteur
+  "idProjet": "cm1q2r3s4t5u6v7w8x9y0z1a2"          // string, requis, ID projet du porteur
 }
 ```
 
@@ -143,10 +74,10 @@
   "montantCollecte": 0,
   "dateFin": "2026-06-30T23:59:59.999Z",
   "statut": "BROUILLON",
-  "porteurId": "cm9x8y7z6w5v4u3t2s1r0q",
-  "projetId": "cm1q2r3s4t5u6v7w8x9y0z1a2",
-  "createdAt": "2026-03-03T11:00:00.000Z",
-  "updatedAt": "2026-03-03T11:00:00.000Z"
+  "idPorteur": "cm9x8y7z6w5v4u3t2s1r0q",
+  "idProjet": "cm1q2r3s4t5u6v7w8x9y0z1a2",
+  "dateCreation": "2026-03-03T11:00:00.000Z",
+  "dateMiseAJour": "2026-03-03T11:00:00.000Z"
 }
 ```
 
@@ -160,6 +91,11 @@
 
 ### `GET /campagnes`
 > Liste les campagnes. **Public**
+> Story 4 : En tant qu'utilisateur, je peux consulter les campagnes.
+
+**Query params optionnels**
+- `?idProjet=cm1q2r3s4t5u6v7w8x9y0z1a2` - Filtrer par projet
+- `?statut=ACTIVE` - Filtrer par statut
 
 **Réponse `200 OK`**
 
@@ -172,14 +108,14 @@
     "montantCollecte": 3250,
     "dateFin": "2026-06-30T23:59:59.999Z",
     "statut": "ACTIVE",
-    "porteurId": "cm9x8y7z6w5v4u3t2s1r0q",
-    "projetId": "cm1q2r3s4t5u6v7w8x9y0z1a2",
+    "idPorteur": "cm9x8y7z6w5v4u3t2s1r0q",
+    "idProjet": "cm1q2r3s4t5u6v7w8x9y0z1a2",
     "projet": {
       "titre": "Ma campagne innovante"
     },
     "tauxCompletion": 65,
-    "createdAt": "2026-03-03T11:00:00.000Z",
-    "updatedAt": "2026-03-05T14:30:00.000Z"
+    "dateCreation": "2026-03-03T11:00:00.000Z",
+    "dateMiseAJour": "2026-03-05T14:30:00.000Z"
   }
 ]
 ```
@@ -188,6 +124,7 @@
 
 ### `GET /campagnes/:id`
 > Détail complet d'une campagne. **Public**
+> Story 4 : En tant qu'utilisateur, je peux consulter les campagnes.
 
 **Réponse `200 OK`**
 
@@ -200,8 +137,8 @@
   "montantCollecte": 3250,
   "dateFin": "2026-06-30T23:59:59.999Z",
   "statut": "ACTIVE",
-  "porteurId": "cm9x8y7z6w5v4u3t2s1r0q",
-  "projetId": "cm1q2r3s4t5u6v7w8x9y0z1a2",
+  "idPorteur": "cm9x8y7z6w5v4u3t2s1r0q",
+  "idProjet": "cm1q2r3s4t5u6v7w8x9y0z1a2",
   "projet": {
     "titre": "Ma campagne innovante",
     "description": "Description détaillée...",
@@ -212,8 +149,8 @@
     "tauxCompletion": 65,
     "tempsRestant": "28 jours"
   },
-  "createdAt": "2026-03-03T11:00:00.000Z",
-  "updatedAt": "2026-03-05T14:30:00.000Z"
+  "dateCreation": "2026-03-03T11:00:00.000Z",
+  "dateMiseAJour": "2026-03-05T14:30:00.000Z"
 }
 ```
 
@@ -222,6 +159,7 @@
 
 ### `PATCH /campagnes/:id` 🔒
 > Modifie une campagne. **Uniquement si statut = `BROUILLON`. Rôle requis : PORTEUR (propriétaire)**
+> Story 3 : En tant que porteur de projet, je peux modifier une campagne tant qu'elle n'est pas validée.
 
 **Corps de la requête** — tous les champs sont optionnels
 
@@ -244,31 +182,10 @@
 - `403`, Non propriétaire **ou** campagne hors statut `BROUILLON` 
 - `404`, Campagne introuvable                                     
 
-### `POST /campagnes/:id/soumettre` 🔒
-> Soumet la campagne à la validation admin. **Statut : `BROUILLON` → `EN_ATTENTE`**  
-> **Rôle requis : PORTEUR (propriétaire)**
-
-**Corps de la requête** — vide `{}`
-
-**Réponse `200 OK`**
-
-```json
-{
-  "id": "cm3d4e5f6g7h8i9j0k1l2m3n4",
-  "statut": "EN_ATTENTE",
-  "updatedAt": "2026-03-04T09:00:00.000Z"
-}
-```
-
-**Erreurs possibles**
-- `401`, Non authentifié       
-- `403`, Non propriétaire      
-- `404`, Campagne introuvable   
-- `409`, Statut != `BROUILLON` 
-
 ### `POST /campagnes/:id/dupliquer` 🔒
 > Duplique une campagne terminée en un nouveau brouillon.  
 > **Rôle requis : PORTEUR (propriétaire)**
+> Story 8 : En tant que porteur de projet, je peux dupliquer une campagne terminée.
 
 **Conditions :** la campagne doit être en statut `REUSSIE` ou `ECHOUEE`.
 
@@ -295,6 +212,7 @@
 
 ### `POST /campagnes/:campagneId/actualites` 🔒
 > Publie une actualité sur une campagne. **Rôle requis : PORTEUR (propriétaire)**
+> Story 6 : En tant que porteur de projet, je peux publier des actualités sur ma campagne.
 
 **Corps de la requête**
 
@@ -310,10 +228,10 @@
 ```json
 {
   "id": "cm7a8b9c0d1e2f3g4h5i6j7k8",
-  "campagneId": "cm3d4e5f6g7h8i9j0k1l2m3n4",
+  "idCampagne": "cm3d4e5f6g7h8i9j0k1l2m3n4",
   "titre": "On a atteint 50% !",
   "contenu": "Bonjour à tous ! Nous avons atteint 50% de notre objectif. Merci pour votre soutien !",
-  "publishedAt": "2026-03-05T10:00:00.000Z"
+  "datePublication": "2026-03-05T10:00:00.000Z"
 }
 ```
 
@@ -323,25 +241,32 @@
 - `403`, Non propriétaire de la campagne 
 - `404`, Campagne introuvable 
 
-### `GET /campagnes/:campagneId/actualites`
+### `GET /actualites?idCampagne={idCampagne}`
 > Liste les actualités d'une campagne. **Public**
+> Story 6 : Informer les contributeurs (consultation).
+
+**Query params obligatoire**
+- `?idCampagne=cm3d4e5f6g7h8i9j0k1l2m3n4` - Filtrer par campagne
 
 **Réponse `200 OK`**
 
 ```json
-{
-  "id": "cm7a8b9c0d1e2f3g4h5i6j7k8",
-  "campagneId": "cm3d4e5f6g7h8i9j0k1l2m3n4",
-  "titre": "On a atteint 50% !",
-  "contenu": "Bonjour à tous ! Nous avons atteint 50%...",
-  "publishedAt": "2026-03-05T10:00:00.000Z"
-}
+[
+  {
+    "id": "cm7a8b9c0d1e2f3g4h5i6j7k8",
+    "idCampagne": "cm3d4e5f6g7h8i9j0k1l2m3n4",
+    "titre": "On a atteint 50% !",
+    "contenu": "Bonjour à tous ! Nous avons atteint 50%...",
+    "datePublication": "2026-03-05T10:00:00.000Z"
+  }
+]
 ```
 
 ## Ressource : Statistiques
 
-### `GET /campagnes/:id/stats` 🔒
+### `GET /statistiques/campagnes/:id` 🔒
 > Statistiques détaillées d'une campagne. **Rôle requis : PORTEUR (propriétaire) ou ADMIN**
+> Story 7 : En tant que porteur de projet, je peux consulter les statistiques de ma campagne.
 
 **Réponse `200 OK`**
 
@@ -368,93 +293,34 @@
 - `403`, Non propriétaire et non admin 
 - `404`, Campagne introuvable 
 
-## Ressource : Administration
 
-> Toutes les routes `/admin/*` nécessitent le rôle `ADMIN`. 🔒
-
-### `POST /admin/campagnes/:id/valider`
-> Valide une campagne. **Statut : `EN_ATTENTE` → `ACTIVE`**
-
-**Corps de la requête** — vide `{}`
+### POST /system/cloturer-campagnes
+> Clôture automatiquement les campagnes dont la date de fin est dépassée.
+> Appel interne (cron job)
+> Story 5 : En tant que système, je peux clôturer automatiquement une campagne
 
 **Réponse `200 OK`**
 
 ```json
 {
-  "id": "cm3d4e5f6g7h8i9j0k1l2m3n4",
-  "statut": "ACTIVE",
-  "updatedAt": "2026-03-06T08:00:00.000Z"
+  "traitees": 5,
+  "reussies": 2,
+  "echouees": 3,
+  "details": [
+    {
+      "id": "cm3d4e5f6g7h8i9j0k1l2m3n4",
+      "statut": "REUSSIE",
+      "montantCollecte": 5250
+    },
+    {
+      "id": "cm5f6g7h8i9j0k1l2m3n4o5p6",
+      "statut": "ECHOUEE",
+      "montantCollecte": 3200
+    }
+  ]
 }
 ```
 
-**Erreurs possibles**
-- `401`, Non authentifié 
-- `403`, Rôle non admin 
-- `404`, Campagne introuvable 
-- `409`, Statut != `EN_ATTENTE` 
-
-### `POST /admin/campagnes/:id/refuser`
-> Refuse une campagne. **Statut : `EN_ATTENTE` → `REFUSEE`**
-
-**Corps de la requête** — vide `{}`
-
-**Réponse `200 OK`**
-```json
-{
-  "id": "cm3d4e5f6g7h8i9j0k1l2m3n4",
-  "statut": "REFUSEE",
-  "updatedAt": "2026-03-06T08:30:00.000Z"
-}
-```
-
-**Erreurs possibles**
-- `401`, Non authentifié 
-- `403`, Rôle non admin 
-- `404`, Campagne introuvable 
-- `409`, Statut != `EN_ATTENTE` 
-
-## Événements RabbitMQ émis
-
-> Ce microservice **publie** des événements sur RabbitMQ. Le microservice contributions/paiements (Projet 2) et le Dashboard (Projet 4) doivent **écouter** ces événements.
-
-| Exchange    | Routing Key          | Déclencheur                    |
-|-------------|----------------------|--------------------------------|
-| `campaigns` | `campaign.activated` | Admin valide une campagne      |
-| `campaigns` | `campaign.closed`    | Clôture automatique (cron job) |
-| `campaigns` | `campaign.refused`   | Admin refuse une campagne      |
-
-### Payload `campaign.activated`
-
-```json
-{
-  "campaignId": "cm3d4e5f6g7h8i9j0k1l2m3n4",
-  "projectId": "cm1q2r3s4t5u6v7w8x9y0z1a2",
-  "porteurId": "cm9x8y7z6w5v4u3t2s1r0q",
-  "objectif": 5000,
-  "dateFin": "2026-06-30T23:59:59.999Z"
-}
-```
-
-### Payload `campaign.closed`
-
-```json
-{
-  "campaignId": "cm3d4e5f6g7h8i9j0k1l2m3n4",
-  "statut": "REUSSIE",
-  "montantCollecte": 5250
-}
-```
-
-> Le Projet 2 utilise ce payload pour déclencher le **versement des fonds** (`REUSSIE`) ou les **remboursements** (`ECHOUEE`).
-
-### Payload `campaign.refused`
-
-```json
-{
-  "campaignId": "cm3d4e5f6g7h8i9j0k1l2m3n4",
-  "porteurId": "cm9x8y7z6w5v4u3t2s1r0q"
-}
-```
 
 
 
