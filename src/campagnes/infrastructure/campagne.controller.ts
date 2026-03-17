@@ -2,6 +2,7 @@ import { Controller, Post, Get, Param, Body, HttpCode, HttpStatus, UseGuards, Re
 import { CampagnesService } from '../application/campagnes.service';
 import { CreateCampagneDto } from '../dto/create-campagne.dto';
 import { AuthGuard } from '../../auth/auth.guard';
+import { CreateNewsDto } from '../dto/create-news.dto';
 
 @Controller('campagnes')
 export class CampagnesController {
@@ -27,5 +28,26 @@ export class CampagnesController {
   ): Promise<any> {
     const porteurId = req.user.sub;
     return await this.campagnesService.getStatistiques(id, porteurId);
+  }
+
+  @Post(':id/news')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.CREATED)
+  async createNews(
+    @Param('id') campagneId: string,
+    @Body() createNewsDto: CreateNewsDto,
+    @Request() req: any,
+  ): Promise<any> {
+    const porteurId = req.user.sub;
+    createNewsDto.campagneId = campagneId;
+    return await this.campagnesService.createNews(createNewsDto, porteurId);
+  }
+
+  @Get(':id/news')
+  @HttpCode(HttpStatus.OK)
+  async getNewsForCampagne(
+    @Param('id') campagneId: string,
+  ): Promise<any> {
+    return await this.campagnesService.getNewsForCampagne(campagneId);
   }
 }
