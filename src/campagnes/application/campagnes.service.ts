@@ -6,6 +6,8 @@ import { CampagneEntity, StatutCampagne } from '../domain/campagne.entity';
 import { CreateCampagneDto } from '../dto/create-campagne.dto';
 import { ProjectsService } from '../../projects/application/projects.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { NewsEntity } from '../domain/news.entity';
+import { CreateNewsDto } from '../dto/create-news.dto';
 
 @Injectable()
 export class CampagnesService {
@@ -15,6 +17,8 @@ export class CampagnesService {
   constructor(
     @InjectRepository(CampagneEntity)
     private readonly campagneRepository: Repository<CampagneEntity>,
+    @InjectRepository(NewsEntity)
+    private readonly newsRepository: Repository<NewsEntity>,
     private readonly projectsService: ProjectsService,
   ) {}
 
@@ -130,5 +134,30 @@ export class CampagnesService {
       evolutionJournaliere: [],
       statut: campagne.statut,
     };
+  }
+
+  async createNews(createNewsDto: CreateNewsDto, porteurId: string): Promise<NewsEntity> {
+    const campagne = await this.findOne(createNewsDto.campagneId);
+
+    if (campagne.porteurId !== porteurId) {
+      throw new ForbiddenException('Vous n\'êtes pas autorisé à publier des actualités sur cette campagne');
+    }
+
+    const news = this.newsRepository.create({
+      titre: createNewsDto.titre,
+      contenu: createNewsDto.contenu,
+      campagneId: createNewsDto.campagneId,
+    });
+
+    return await this.newsRepository.save(news);
+  }
+
+  async getNewsForCampagne(campagneId: string): Promise<NewsEntity[]> {
+    const campagne = await this.findOne(campagneId);
+
+    return await this.newsRepository.find({
+      where: { campagneId },
+      order: { createdAt: 'DESC' },
+    });
   }
 }
