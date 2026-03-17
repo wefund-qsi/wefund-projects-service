@@ -1,0 +1,61 @@
+{
+  "info": {
+    "_postman_id": "campagnes-wefund-2026",
+    "name": "WeFund-Campagnes",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "API Campagnes WeFund - CREATE + GET ALL + GET ONE + DELETE (conforme API_CONTRAT)"
+  },
+  "item": [
+    {
+      "name": "CREATE - Nouvelle campagne (AUTH)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titre\": \"Financement pour mon projet innovant\",\n  \"description\": \"Aidez-nous à lancer notre produit...\",\n  \"objectif\": 5000,\n  \"dateFin\": \"2026-06-30T23:59:59.999Z\",\n  \"projetId\": \"{{projetId}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/campagnes",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "campagnes"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "jwt_token",
+      "value": "",
+      "description": "JWT du meme porteur que celui qui a cree le projet"
+    },
+    {
+      "key": "projetId",
+      "value": "",
+      "description": "ID dun projet cree avec le meme jwt_token"
+    },
+    {
+      "key": "campagneId", 
+      "value": "",
+      "description": "ID campagne (auto-rempli par GET ALL)"
+    }
+  ]
+}

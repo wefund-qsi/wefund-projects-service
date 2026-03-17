@@ -1,0 +1,205 @@
+{
+  "info": {
+    "_postman_id": "us7-statistiques-campagne-wefund-2026",
+    "name": "WeFund - US7 Statistiques Campagne",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "US7 - En tant que porteur de projet, je peux consulter les statistiques de ma campagne afin de suivre sa progression."
+  },
+  "item": [
+    {
+      "name": "SETUP - Créer un projet (prérequis)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.collectionVariables.unset('projetId');",
+              "pm.collectionVariables.unset('campagneId');",
+              "pm.collectionVariables.unset('projectPorteurId');"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Projet créé avec succès', function () {",
+              "  pm.response.to.have.status(201);",
+              "});",
+              "var json = pm.response.json();",
+              "pm.collectionVariables.set('projetId', json.id);",
+              "pm.collectionVariables.set('projectPorteurId', json.porteurId || json.idPorteur || '');"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{us7_jwt_token}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titre\": \"Projet Test US7\",\n  \"description\": \"Projet créé pour tester les statistiques de campagne\",\n  \"photo\": \"https://example.com/photo-us7.jpg\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/projets",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "projets"]
+        }
+      }
+    },
+    {
+      "name": "SETUP - Créer une campagne (prérequis)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "const token = pm.collectionVariables.get('us7_jwt_token');",
+              "const projectPorteurId = pm.collectionVariables.get('projectPorteurId');",
+              "const projetId = pm.collectionVariables.get('projetId');",
+              "if (!token) { throw new Error('La variable de collection us7_jwt_token est vide. Colle le JWT utilisé pour créer le projet.'); }",
+              "if (!projetId) { throw new Error('La variable projetId est vide. Lance dabord SETUP - Creer un projet (prerequis) dans cette collection US7.'); }",
+              "if (!projectPorteurId) { throw new Error('Le proprietaire du projet na pas ete sauvegarde. Recree le projet depuis cette collection US7.'); }",
+              "const payload = JSON.parse(atob(token.split('.')[1]));",
+              "if (payload.sub !== projectPorteurId) { throw new Error('Le JWT courant ne correspond pas au proprietaire du projet. Recolle le token dans us7_jwt_token puis relance SETUP - Creer un projet avant la campagne.'); }"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Campagne créée avec succès', function () {",
+              "  pm.response.to.have.status(201);",
+              "});",
+              "var json = pm.response.json();",
+              "pm.collectionVariables.set('campagneId', json.id);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{us7_jwt_token}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titre\": \"Campagne Test US7\",\n  \"description\": \"Campagne créée pour tester les statistiques\",\n  \"objectif\": 5000,\n  \"dateFin\": \"2026-12-31T23:59:59.000Z\",\n  \"projetId\": \"{{projetId}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/campagnes",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "campagnes"]
+        }
+      }
+    },
+    {
+      "name": "GET statistiques - Succès (porteur authentifié)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Statut 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "var json = pm.response.json();",
+              "pm.test('Contient campagneId', function () { pm.expect(json).to.have.property('campagneId'); });",
+              "pm.test('Contient objectif', function () { pm.expect(json).to.have.property('objectif'); });",
+              "pm.test('Contient montantCollecte', function () { pm.expect(json).to.have.property('montantCollecte'); });",
+              "pm.test('Contient tauxCompletion', function () { pm.expect(json).to.have.property('tauxCompletion'); });",
+              "pm.test('Contient nombreContributeurs', function () { pm.expect(json).to.have.property('nombreContributeurs'); });",
+              "pm.test('Contient contributionMoyenne', function () { pm.expect(json).to.have.property('contributionMoyenne'); });",
+              "pm.test('Contient tempsRestant', function () { pm.expect(json).to.have.property('tempsRestant'); });",
+              "pm.test('Contient evolutionJournaliere', function () { pm.expect(json.evolutionJournaliere).to.be.an('array'); });",
+              "pm.test('Contient statut', function () { pm.expect(json).to.have.property('statut'); });",
+              "pm.test('montantCollecte est 0 à la création', function () { pm.expect(json.montantCollecte).to.equal(0); });",
+              "pm.test('tauxCompletion est 0 à la création', function () { pm.expect(json.tauxCompletion).to.equal(0); });",
+              "pm.test('statut est BROUILLON à la création', function () { pm.expect(json.statut).to.equal('BROUILLON'); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{us7_jwt_token}}", "type": "text" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/campagnes/{{campagneId}}/stats",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "campagnes", "{{campagneId}}", "stats"]
+        }
+      }
+    },
+    {
+      "name": "GET statistiques - Erreur 401 (sans token)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Statut 401 sans token', function () {",
+              "  pm.response.to.have.status(401);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/campagnes/{{campagneId}}/stats",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "campagnes", "{{campagneId}}", "stats"]
+        }
+      }
+    },
+    {
+      "name": "GET statistiques - Erreur 404 (campagne inexistante)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Statut 404 si campagne inexistante', function () {",
+              "  pm.response.to.have.status(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{us7_jwt_token}}", "type": "text" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/campagnes/00000000-0000-0000-0000-000000000000/stats",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "campagnes", "00000000-0000-0000-0000-000000000000", "stats"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "us7_jwt_token", "value": "" },
+    { "key": "projetId", "value": "" },
+    { "key": "campagneId", "value": "" },
+    { "key": "projectPorteurId", "value": "" }
+  ]
+}
