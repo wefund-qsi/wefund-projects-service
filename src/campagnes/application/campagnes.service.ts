@@ -1,12 +1,17 @@
-import { Injectable, NotFoundException, ForbiddenException, UnauthorizedException } from '@nestjs/common';
+
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException, UnauthorizedException ,Logger} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { LessThanOrEqual, Repository } from 'typeorm';
 import { CampagneEntity, StatutCampagne } from '../domain/campagne.entity';
 import { CreateCampagneDto } from '../dto/create-campagne.dto';
 import { ProjectsService } from '../../projects/application/projects.service';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class CampagnesService {
+
+  private readonly logger = new Logger(CampagnesService.name);
+
   constructor(
     @InjectRepository(CampagneEntity)
     private readonly campagneRepository: Repository<CampagneEntity>,
@@ -37,6 +42,47 @@ export class CampagnesService {
     });
 
     return await this.campagneRepository.save(campagne);
+  }
+
+ @Cron(CronExpression.EVERY_10_SECONDS) 
+  async closeExpiredCampaigns(): Promise<void> {
+    this.logger.log('Checking for expired campaigns...');
+
+    const currentDate = new Date();
+
+    const campaignsToClose = await this.campagneRepository.find({
+      where: {
+        statut: StatutCampagne.ACTIVE,
+        dateFin: LessThanOrEqual(currentDate), 
+      },
+    });
+
+    if (campaignsToClose.length === 0) {
+      this.logger.log('No campaigns to close at the moment.');
+      return;
+    }
+
+    this.logger.log(`${campaignsToClose.length} campaign(s) to close found.`);
+
+    for (const campaign of campaignsToClose) {
+      try {
+        const isGoalReached = Number(campaign.montantCollecte) >= Number(campaign.objectif);
+
+        if (isGoalReached) {
+          campaign.statut = StatutCampagne.REUSSIE;
+        } else {
+          campaign.statut = StatutCampagne.ECHOUEE;
+        }
+
+        await this.campagneRepository.save(campaign);
+        
+        this.logger.log(`Campaign [${campaign.id}] closed successfully. New status: ${campaign.statut}`);
+
+      } catch (error) {
+        
+        this.logger.error(`Error while closing campaign [${campaign.id}]`, error.stack);
+      }
+    }
   }
 
   async findOne(id: string): Promise<CampagneEntity> {

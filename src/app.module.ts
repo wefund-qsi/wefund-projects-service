@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProjectsModule } from './projects/projects.module';
 import { CampagnesModule } from './campagnes/campagnes.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -36,6 +37,8 @@ import { CampagnesModule } from './campagnes/campagnes.module';
       }),
     }),
 
+    ScheduleModule.forRoot(),
+    
     ProjectsModule,
 
     CampagnesModule,
