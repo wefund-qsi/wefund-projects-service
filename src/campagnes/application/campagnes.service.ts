@@ -1,12 +1,11 @@
-import { Injectable, NotFoundException, BadRequestException, UnauthorizedException ,Logger} from '@nestjs/common';
+
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException, UnauthorizedException ,Logger} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, Repository } from 'typeorm';
 import { CampagneEntity, StatutCampagne } from '../domain/campagne.entity';
 import { CreateCampagneDto } from '../dto/create-campagne.dto';
 import { ProjectsService } from '../../projects/application/projects.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
-
-const MOCK_PORTEUR_ID = "cm9x8y7z6w5v4u3t2s1r0q";
 
 @Injectable()
 export class CampagnesService {
@@ -20,17 +19,18 @@ export class CampagnesService {
   ) {}
 
   async create(createCampagneDto: CreateCampagneDto, porteurId: string): Promise<CampagneEntity> {
-    if (porteurId !== MOCK_PORTEUR_ID) {
-      throw new UnauthorizedException('Token invalide');
-    }
-
     const projet = await this.projectsService.findOne(createCampagneDto.projetId);
     if (!projet) {
       throw new NotFoundException(`Projet ${createCampagneDto.projetId} introuvable`);
     }
 
-    if (projet.porteurId !== porteurId) {
-      throw new BadRequestException('Le projet ne vous appartient pas');
+    const projectOwnerId = String(projet.porteurId).trim();
+    const requesterId = String(porteurId).trim();
+
+    if (projectOwnerId !== requesterId) {
+      throw new ForbiddenException(
+        `Le projet ne vous appartient pas (projectOwnerId=${projectOwnerId}, requesterId=${requesterId})`,
+      );
     }
 
     const campagne = this.campagneRepository.create({
@@ -85,4 +85,50 @@ export class CampagnesService {
     }
   }
 
+  async findOne(id: string): Promise<CampagneEntity> {
+    const campagne = await this.campagneRepository.findOne({ where: { id } });
+    if (!campagne) {
+      throw new NotFoundException(`Campagne ${id} introuvable`);
+    }
+    return campagne;
+  }
+
+  async getStatistiques(id: string, porteurId: string): Promise<object> {
+    const campagne = await this.findOne(id);
+
+    if (campagne.porteurId !== porteurId) {
+      throw new UnauthorizedException('Accès refusé : cette campagne ne vous appartient pas');
+    }
+
+    const objectif = Number(campagne.objectif);
+    const montantCollecte = Number(campagne.montantCollecte);
+    const tauxCompletion = objectif > 0
+      ? Math.min(Math.round((montantCollecte / objectif) * 10000) / 100, 100)
+      : 0;
+
+    const maintenant = new Date();
+    const joursRestants = Math.max(
+      0,
+      Math.ceil((campagne.dateFin.getTime() - maintenant.getTime()) / (1000 * 60 * 60 * 24)),
+    );
+    const tempsRestant = joursRestants === 0 ? 'Terminée' : `${joursRestants} jours`;
+
+    // nombreContributeurs et evolutionJournaliere viendront du service contributions
+    const nombreContributeurs = 0;
+    const contributionMoyenne = nombreContributeurs > 0
+      ? Math.round((montantCollecte / nombreContributeurs) * 100) / 100
+      : 0;
+
+    return {
+      campagneId: campagne.id,
+      objectif,
+      montantCollecte,
+      tauxCompletion,
+      nombreContributeurs,
+      contributionMoyenne,
+      tempsRestant,
+      evolutionJournaliere: [],
+      statut: campagne.statut,
+    };
+  }
 }
