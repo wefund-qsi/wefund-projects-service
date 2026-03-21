@@ -1,13 +1,14 @@
 
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException, UnauthorizedException ,Logger} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThanOrEqual, Repository } from 'typeorm';
+import { LessThanOrEqual, Repository, FindOptionsWhere } from 'typeorm';
 import { CampagneEntity, StatutCampagne } from '../domain/campagne.entity';
 import { CreateCampagneDto } from '../dto/create-campagne.dto';
 import { ProjectsService } from '../../projects/application/projects.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { NewsEntity } from '../domain/news.entity';
 import { CreateNewsDto } from '../dto/create-news.dto';
+import { UpdateCampagneDto } from '../dto/update-campagne.dto';
 
 @Injectable()
 export class CampagnesService {
@@ -47,6 +48,81 @@ export class CampagnesService {
 
     return await this.campagneRepository.save(campagne);
   }
+
+  async update(
+    id: string,
+    updateCampagneDto: UpdateCampagneDto,
+    porteurId: string,
+  ): Promise<CampagneEntity> {
+    const campagne = await this.findOne(id);
+
+    if (campagne.porteurId !== porteurId) {
+      throw new ForbiddenException(
+        "Vous n'êtes pas autorisé à modifier cette campagne",
+      );
+    }
+
+    if (campagne.statut !== StatutCampagne.BROUILLON) {
+      throw new ForbiddenException(
+        'Seules les campagnes en brouillon peuvent être modifiées',
+      );
+    }
+
+    if (updateCampagneDto.titre !== undefined) {
+      campagne.titre = updateCampagneDto.titre;
+    }
+
+    if (updateCampagneDto.description !== undefined) {
+      campagne.description = updateCampagneDto.description;
+    }
+
+    if (updateCampagneDto.objectif !== undefined) {
+      campagne.objectif = updateCampagneDto.objectif;
+    }
+
+    if (updateCampagneDto.dateFin !== undefined) {
+      campagne.dateFin = new Date(updateCampagneDto.dateFin);
+    }
+
+    return await this.campagneRepository.save(campagne);
+  }
+
+
+  async findAll(
+    projetId?: string,
+    statut?: StatutCampagne,
+  ): Promise<CampagneEntity[]> {
+    const where: FindOptionsWhere<CampagneEntity> = {};
+
+    if (projetId) {
+      where.projetId = projetId;
+    }
+
+    if (statut) {
+      where.statut = statut;
+    }
+
+    return await this.campagneRepository.find({
+      where,
+      relations: ['projet'],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+   async findOneDetailed(id: string): Promise<CampagneEntity> {
+    const campagne = await this.campagneRepository.findOne({
+      where: { id },
+      relations: ['projet'],
+    });
+
+    if (!campagne) {
+      throw new NotFoundException(`Campagne ${id} introuvable`);
+    }
+
+    return campagne;
+  }
+
+
 
  @Cron(CronExpression.EVERY_10_SECONDS) 
   async closeExpiredCampaigns(): Promise<void> {
@@ -160,4 +236,40 @@ export class CampagnesService {
       order: { createdAt: 'DESC' },
     });
   }
+
+  async duplicate(id: string, porteurId: string): Promise<CampagneEntity> {
+    const campagne = await this.findOne(id);
+
+    if (campagne.porteurId !== porteurId) {
+      throw new ForbiddenException(
+        "Vous n'êtes pas autorisé à dupliquer cette campagne",
+      );
+    }
+
+    if (
+      campagne.statut !== StatutCampagne.REUSSIE &&
+      campagne.statut !== StatutCampagne.ECHOUEE
+    ) {
+      throw new ForbiddenException(
+        'Seules les campagnes terminées peuvent être dupliquées',
+      );
+    }
+
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 90);
+
+    const duplicatedCampagne = this.campagneRepository.create({
+      titre: campagne.titre,
+      description: campagne.description,
+      objectif: campagne.objectif,
+      montantCollecte: 0,
+      dateFin: futureDate,
+      statut: StatutCampagne.BROUILLON,
+      porteurId: campagne.porteurId,
+      projetId: campagne.projetId,
+    });
+
+    return await this.campagneRepository.save(duplicatedCampagne);
+  }
+
 }
