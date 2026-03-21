@@ -1,7 +1,7 @@
 
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException, UnauthorizedException ,Logger} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThanOrEqual, Repository } from 'typeorm';
+import { LessThanOrEqual, Repository, FindOptionsWhere } from 'typeorm';
 import { CampagneEntity, StatutCampagne } from '../domain/campagne.entity';
 import { CreateCampagneDto } from '../dto/create-campagne.dto';
 import { ProjectsService } from '../../projects/application/projects.service';
@@ -47,6 +47,28 @@ export class CampagnesService {
 
     return await this.campagneRepository.save(campagne);
   }
+
+  async findAll(
+    projetId?: string,
+    statut?: StatutCampagne,
+  ): Promise<CampagneEntity[]> {
+    const where: FindOptionsWhere<CampagneEntity> = {};
+
+    if (projetId) {
+      where.projetId = projetId;
+    }
+
+    if (statut) {
+      where.statut = statut;
+    }
+
+    return await this.campagneRepository.find({
+      where,
+      relations: ['projet'],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
 
  @Cron(CronExpression.EVERY_10_SECONDS) 
   async closeExpiredCampaigns(): Promise<void> {
