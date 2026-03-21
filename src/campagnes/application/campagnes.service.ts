@@ -69,6 +69,20 @@ export class CampagnesService {
     });
   }
 
+   async findOneDetailed(id: string): Promise<CampagneEntity> {
+    const campagne = await this.campagneRepository.findOne({
+      where: { id },
+      relations: ['projet'],
+    });
+
+    if (!campagne) {
+      throw new NotFoundException(`Campagne ${id} introuvable`);
+    }
+
+    return campagne;
+  }
+
+
 
  @Cron(CronExpression.EVERY_10_SECONDS) 
   async closeExpiredCampaigns(): Promise<void> {

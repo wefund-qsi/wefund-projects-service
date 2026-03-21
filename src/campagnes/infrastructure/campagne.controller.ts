@@ -30,6 +30,12 @@ export class CampagnesController {
     return await this.campagnesService.findAll(projetId, statut);
   }
 
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  async findOne(@Param('id') id: string): Promise<any> {
+    return await this.campagnesService.findOneDetailed(id);
+  }
+
 
   @Get(':id/stats')
   @UseGuards(AuthGuard)
