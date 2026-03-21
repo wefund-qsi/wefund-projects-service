@@ -43,12 +43,12 @@ Les routes `GET` publiques (liste et détail des projets/campagnes) sont accessi
 #### Gestion des campagnes
 
 - [x] **US2 — Créer une campagne de financement** [Réalisé]
-- [ ] US3 — Modifier une campagne (brouillon uniquement)
-- [ ] US4 — Consulter les campagnes
+- [x] US3 — Modifier une campagne (brouillon uniquement)
+- [x] US4 — Consulter les campagnes
 - [ ] US5 — Clôture automatique d'une campagne à échéance
 - [ ] US6 — Publier des actualités sur une campagne
 - [ ] US7 — Consulter les statistiques d'une campagne
-- [ ] US8 — Dupliquer une campagne terminée
+- [x] US8 — Dupliquer une campagne terminée
 
 #### Modération (Admin)
 
@@ -134,6 +134,7 @@ wefund-projects-service/
 │   │   │   └── campagne.entity.ts
 │   │   ├── dto/                     # DTOs et validation
 │   │   │   └── create-campagne.dto.ts
+│   │   │   └── update-campagne.dto.ts
 │   │   ├── infrastructure/          # Contrôleurs / points d’entrée
 │   │   │   └── campagne.controller.ts
 │   │   └── campagnes.module.ts
