@@ -1,9 +1,10 @@
-import { Controller, Post, Get, Param, Body, HttpCode, HttpStatus, UseGuards, Request, Query } from '@nestjs/common';
+import { Controller, Post, Get, Patch, Param, Body, HttpCode, HttpStatus, UseGuards, Request, Query } from '@nestjs/common';
 import { CampagnesService } from '../application/campagnes.service';
 import { CreateCampagneDto } from '../dto/create-campagne.dto';
 import { AuthGuard } from '../../auth/auth.guard';
 import { CreateNewsDto } from '../dto/create-news.dto';
 import { StatutCampagne } from '../domain/campagne.entity';
+import { UpdateCampagneDto } from '../dto/update-campagne.dto';
 
 
 @Controller('campagnes')
@@ -36,6 +37,17 @@ export class CampagnesController {
     return await this.campagnesService.findOneDetailed(id);
   }
 
+  @Patch(':id')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async update(
+    @Param('id') id: string,
+    @Body() updateCampagneDto: UpdateCampagneDto,
+    @Request() req: any,
+  ): Promise<any> {
+    const porteurId = req.user.sub;
+    return await this.campagnesService.update(id, updateCampagneDto, porteurId);
+  }
 
   @Get(':id/stats')
   @UseGuards(AuthGuard)
