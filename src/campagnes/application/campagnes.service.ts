@@ -236,4 +236,40 @@ export class CampagnesService {
       order: { createdAt: 'DESC' },
     });
   }
+
+  async duplicate(id: string, porteurId: string): Promise<CampagneEntity> {
+    const campagne = await this.findOne(id);
+
+    if (campagne.porteurId !== porteurId) {
+      throw new ForbiddenException(
+        "Vous n'êtes pas autorisé à dupliquer cette campagne",
+      );
+    }
+
+    if (
+      campagne.statut !== StatutCampagne.REUSSIE &&
+      campagne.statut !== StatutCampagne.ECHOUEE
+    ) {
+      throw new ForbiddenException(
+        'Seules les campagnes terminées peuvent être dupliquées',
+      );
+    }
+
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 90);
+
+    const duplicatedCampagne = this.campagneRepository.create({
+      titre: campagne.titre,
+      description: campagne.description,
+      objectif: campagne.objectif,
+      montantCollecte: 0,
+      dateFin: futureDate,
+      statut: StatutCampagne.BROUILLON,
+      porteurId: campagne.porteurId,
+      projetId: campagne.projetId,
+    });
+
+    return await this.campagneRepository.save(duplicatedCampagne);
+  }
+
 }

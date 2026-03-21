@@ -80,4 +80,16 @@ export class CampagnesController {
   ): Promise<any> {
     return await this.campagnesService.getNewsForCampagne(campagneId);
   }
+
+  @Post(':id/dupliquer')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.CREATED)
+  async duplicate(
+    @Param('id') id: string,
+    @Request() req: any,
+  ): Promise<any> {
+    const porteurId = req.user.sub;
+    return await this.campagnesService.duplicate(id, porteurId);
+  }
+
 }
