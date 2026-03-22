@@ -22,47 +22,33 @@ Authorization: Bearer <TOKEN>
 
 Les routes `GET` publiques (liste et détail des projets/campagnes) sont accessibles sans token.
 
-### Rôles pris en charge
 
-| Rôle           | Description                                   |
-|----------------|-----------------------------------------------|
-| `PORTEUR`      | Crée et gère ses propres projets et campagnes |
-| `CONTRIBUTEUR` | Consulte les campagnes                        |
-| `ADMIN`        | Valide ou refuse les campagnes                |
-| `VISITEUR`     | Accès lecture seule, sans authentification    |
-
----
 
 ## Fonctionnalités (User Stories)
 
 #### Gestion des projets
 
-- [x] **US1 — Créer un projet** [Réalisé]
-- [x] **US4 — Consulter les projets (liste + détail)** [Réalisé]
+- [x] **US1 — Créer un projet** 
+- [x] **US4 — Consulter les projets (liste + détail)**
 
 #### Gestion des campagnes
 
-- [x] **US2 — Créer une campagne de financement** [Réalisé]
-- [x] US3 — Modifier une campagne (brouillon uniquement)
-- [x] US4 — Consulter les campagnes
-- [ ] US5 — Clôture automatique d'une campagne à échéance
-- [ ] US6 — Publier des actualités sur une campagne
-- [ ] US7 — Consulter les statistiques d'une campagne
-- [x] US8 — Dupliquer une campagne terminée
-
-#### Modération (Admin)
-
-- [ ] Valider une campagne (`EN_ATTENTE` → `ACTIVE`)
-- [ ] Refuser une campagne (`EN_ATTENTE` → `REFUSEE`)
+- [x] **US2 — Créer une campagne de financement** 
+- [x] **US3 — Modifier une campagne (brouillon uniquement)**
+- [x] **US4 — Consulter les campagnes**
+- [x] **US5 — Clôture automatique d'une campagne à échéance**
+- [x] **US6 — Publier des actualités sur une campagne**
+- [x] **US7 — Consulter les statistiques d'une campagne**
+- [x] **US8 — Dupliquer une campagne terminée**
 
 ---
 
 ## Règles de gestion
 
-- [x] **RG1 — Une campagne possède au minimum : titre, description, objectif financier, date de fin, porteur identifié** (Implémenté)
-- [x] **RG2 — Un projet possède au minimum : titre, description, photo** (Implémenté)
+- [x] **RG1 — Une campagne possède au minimum : titre, description, objectif financier, date de fin, porteur identifié** 
+- [x] **RG2 — Un projet possède au minimum : titre, description, photo** 
 - [ ] RG3 — Une campagne ne peut plus être modifiée après publication
-- [ ] RG4 — Statuts possibles : `BROUILLON`, `EN_ATTENTE`, `ACTIVE`, `REUSSIE`, `ECHOUEE`, `REFUSEE`
+- [x] RG4 — Statuts possibles : `BROUILLON`, `EN_ATTENTE`, `ACTIVE`, `REUSSIE`, `ECHOUEE`, `REFUSEE`
 
 ---
 
@@ -162,19 +148,17 @@ wefund-projects-service/
 
 Pour le détail des payloads (corps de requêtes) et des réponses, veuillez consulter le [Contrat d'API](./API_CONTRAT.md).
 
-| Méthode | Route                          | Auth             | Description                       |
-|---------|--------------------------------|------------------|-----------------------------------|
-| `POST`  | `/projets`                     | 🔒 PORTEUR       | Créer un projet                   |
-| `GET`   | `/projets`                     | Public           | Lister les projets                |
-| `GET`   | `/projets/:id`                 | Public           | Détail d'un projet                |
-| `PATCH` | `/projets/:id`                 | 🔒 PORTEUR       | Modifier un projet                |
-| `DELETE`| `/projets/:id`                 | 🔒 PORTEUR       | Supprimer un projet               |
-| `POST`  | `/campagnes`                   | 🔒 PORTEUR       | Créer une campagne                |
-| `GET`   | `/campagnes`                   | Public           | Lister les campagnes              |
-| `GET`   | `/campagnes/:id`               | Public           | Détail d'une campagne             |
-| `PATCH` | `/campagnes/:id`               | 🔒 PORTEUR       | Modifier une campagne (brouillon) |
-| `POST`  | `/campagnes/:id/soumettre`     | 🔒 PORTEUR       | Soumettre à validation            |
-| `POST`  | `/campagnes/:id/dupliquer`     | 🔒 PORTEUR       | Dupliquer une campagne terminée   |
-| `POST`  | `/campagnes/:id/actualites`    | 🔒 PORTEUR       | Publier une actualité             |
-| `GET`   | `/campagnes/:id/actualites`    | Public           | Lister les actualités             |
-| `GET`   | `/campagnes/:id/stats`         | 🔒 PORTEUR/ADMIN | Statistiques d'une campagne       |
+| Méthode | Route                          | Description                       |
+|---------|--------------------------------|-----------------------------------|
+| `POST`  | `/projets`                     | Créer un projet                   |
+| `GET`   | `/projets`                     | Lister les projets                |
+| `GET`   | `/projets/:id`                 | Détail d'un projet                |
+| `DELETE`| `/projets/:id`                 | Supprimer un projet               |
+| `POST`  | `/campagnes`                   | Créer une campagne                |
+| `GET`   | `/campagnes`                   | Lister les campagnes              |
+| `GET`   | `/campagnes/:id`               | Détail d'une campagne             |
+| `PATCH` | `/campagnes/:id`               | Modifier une campagne (brouillon) |
+| `POST`  | `/campagnes/:id/dupliquer`     | Dupliquer une campagne terminée   |
+| `POST`  | `/campagnes/:id/actualites`    | Publier une actualité             |
+| `GET`   | `/campagnes/:id/actualites`    | Lister les actualités             |
+| `GET`   | `/campagnes/:id/stats`         | Statistiques d'une campagne       |
