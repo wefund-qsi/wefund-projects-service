@@ -28,27 +28,27 @@ Les routes `GET` publiques (liste et détail des projets/campagnes) sont accessi
 
 #### Gestion des projets
 
-- [x] **US1 — Créer un projet** [Réalisé]
-- [x] **US4 — Consulter les projets (liste + détail)** [Réalisé]
+- [x] **US1 — Créer un projet** 
+- [x] **US4 — Consulter les projets (liste + détail)**
 
 #### Gestion des campagnes
 
-- [x] **US2 — Créer une campagne de financement** [Réalisé]
-- [ ] US3 — Modifier une campagne (brouillon uniquement)
-- [x] US4 — Consulter les campagnes
-- [x] US5 — Clôture automatique d'une campagne à échéance
-- [x] US6 — Publier des actualités sur une campagne
-- [x] US7 — Consulter les statistiques d'une campagne
-- [ ] US8 — Dupliquer une campagne terminée
+- [x] **US2 — Créer une campagne de financement** 
+- [x] **US3 — Modifier une campagne (brouillon uniquement)**
+- [x] **US4 — Consulter les campagnes**
+- [x] **US5 — Clôture automatique d'une campagne à échéance**
+- [x] **US6 — Publier des actualités sur une campagne**
+- [x] **US7 — Consulter les statistiques d'une campagne**
+- [x] **US8 — Dupliquer une campagne terminée**
 
 ---
 
 ## Règles de gestion
 
-- [x] **RG1 — Une campagne possède au minimum : titre, description, objectif financier, date de fin, porteur identifié** (Implémenté)
-- [x] **RG2 — Un projet possède au minimum : titre, description, photo** (Implémenté)
+- [x] **RG1 — Une campagne possède au minimum : titre, description, objectif financier, date de fin, porteur identifié** 
+- [x] **RG2 — Un projet possède au minimum : titre, description, photo** 
 - [ ] RG3 — Une campagne ne peut plus être modifiée après publication
-- [ ] RG4 — Statuts possibles : `BROUILLON`, `EN_ATTENTE`, `ACTIVE`, `REUSSIE`, `ECHOUEE`, `REFUSEE`
+- [x] RG4 — Statuts possibles : `BROUILLON`, `EN_ATTENTE`, `ACTIVE`, `REUSSIE`, `ECHOUEE`, `REFUSEE`
 
 ---
 
@@ -120,6 +120,7 @@ wefund-projects-service/
 │   │   │   └── campagne.entity.ts
 │   │   ├── dto/                     # DTOs et validation
 │   │   │   └── create-campagne.dto.ts
+│   │   │   └── update-campagne.dto.ts
 │   │   ├── infrastructure/          # Contrôleurs / points d’entrée
 │   │   │   └── campagne.controller.ts
 │   │   └── campagnes.module.ts
