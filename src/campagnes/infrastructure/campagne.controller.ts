@@ -48,6 +48,18 @@ export class CampagnesController {
     const porteurId = req.user.sub;
     return await this.campagnesService.update(id, updateCampagneDto, porteurId);
   }
+  
+  @Post(':id/soumettre')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async submit(
+    @Param('id') id: string,
+    @Request() req: any,
+  ): Promise<any> {
+    const porteurId = req.user.sub;
+    return await this.campagnesService.submit(id, porteurId);
+  }
+
 
   @Get(':id/stats')
   @UseGuards(AuthGuard)
