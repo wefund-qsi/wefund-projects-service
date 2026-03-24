@@ -59,7 +59,7 @@ describe('CampagnesService', () => {
     jest.clearAllMocks();
   });
 
-  // ------------------ CREATE ------------------
+  // CREATE
   it('should create a campagne', async () => {
     const dto = {
       projetId: '1',
@@ -100,7 +100,7 @@ describe('CampagnesService', () => {
     ).rejects.toThrow(ForbiddenException);
   });
 
-  // ------------------ UPDATE ------------------
+  // UPDATE
   it('should update campagne', async () => {
     const campagne = {
       id: '1',
@@ -134,7 +134,7 @@ describe('CampagnesService', () => {
     ).rejects.toThrow(ForbiddenException);
   });
 
-  // ------------------ FIND ONE ------------------
+  // FIND ONE
   it('should return campagne', async () => {
     const campagne = { id: '1' };
 
@@ -151,7 +151,7 @@ describe('CampagnesService', () => {
     await expect(service.findOne('1')).rejects.toThrow(NotFoundException);
   });
 
-  // ------------------ STATISTIQUES ------------------
+  // STATISTIQUE
   it('should return stats', async () => {
     const campagne = {
       id: '1',
@@ -170,7 +170,7 @@ describe('CampagnesService', () => {
     expect(result).toHaveProperty('tempsRestant');
   });
 
-  // ------------------ NEWS ------------------
+  // NEW
   it('should create news', async () => {
     const campagne = {
       id: '1',
@@ -193,7 +193,7 @@ describe('CampagnesService', () => {
     expect(result).toEqual(dto);
   });
 
-  // ------------------ DUPLICATE ------------------
+  // DUPLICATE
   it('should duplicate campagne', async () => {
     const campagne = {
       id: '1',
