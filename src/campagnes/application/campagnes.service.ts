@@ -9,9 +9,12 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { NewsEntity } from '../domain/news.entity';
 import { CreateNewsDto } from '../dto/create-news.dto';
 import { UpdateCampagneDto } from '../dto/update-campagne.dto';
+import { Inject, OnModuleInit } from '@nestjs/common';
+import { ClientKafka } from '@nestjs/microservices';
+
 
 @Injectable()
-export class CampagnesService {
+export class CampagnesService implements OnModuleInit {
 
   private readonly logger = new Logger(CampagnesService.name);
 
@@ -21,6 +24,8 @@ export class CampagnesService {
     @InjectRepository(NewsEntity)
     private readonly newsRepository: Repository<NewsEntity>,
     private readonly projectsService: ProjectsService,
+    @Inject('KafkaProducer')
+    private readonly kafkaClient: ClientKafka,
   ) {}
 
   async create(createCampagneDto: CreateCampagneDto, porteurId: string): Promise<CampagneEntity> {
@@ -86,6 +91,30 @@ export class CampagnesService {
 
     return await this.campagneRepository.save(campagne);
   }
+
+  async submit(id: string, porteurId: string): Promise<CampagneEntity> {
+    const campagne = await this.findOne(id);
+
+    if (campagne.porteurId !== porteurId) {
+      throw new ForbiddenException(
+        "Vous n'êtes pas autorisé à soumettre cette campagne",
+      );
+    }
+
+    if (campagne.statut !== StatutCampagne.BROUILLON) {
+      throw new ForbiddenException(
+        'Seules les campagnes en brouillon peuvent être soumises',
+      );
+    }
+
+    campagne.statut = StatutCampagne.EN_ATTENTE;
+    const savedCampagne = await this.campagneRepository.save(campagne);
+
+    this.emitCampaignEvent('campaign.submitted', savedCampagne);
+
+    return savedCampagne;
+  }
+
 
 
   async findAll(
@@ -156,8 +185,11 @@ export class CampagnesService {
 
         await this.campagneRepository.save(campaign);
         
-        this.logger.log(`Campaign [${campaign.id}] closed successfully. New status: ${campaign.statut}`);
-
+        if (campaign.statut === StatutCampagne.REUSSIE) {
+          this.emitCampaignEvent('campaign.closed.success', campaign);
+        } else {
+          this.emitCampaignEvent('campaign.closed.failed', campaign);
+        }
       } catch (error) {
         
         this.logger.error(`Error while closing campaign [${campaign.id}]`, error.stack);
@@ -271,5 +303,23 @@ export class CampagnesService {
 
     return await this.campagneRepository.save(duplicatedCampagne);
   }
+
+  async onModuleInit() {
+    await this.kafkaClient.connect();
+  }
+
+  private emitCampaignEvent(topic: string, campagne: CampagneEntity): void {
+    this.kafkaClient.emit(topic, {
+      campagneId: campagne.id,
+      projetId: campagne.projetId,
+      porteurId: campagne.porteurId,
+      statut: campagne.statut,
+      objectif: Number(campagne.objectif),
+      montantCollecte: Number(campagne.montantCollecte),
+      dateFin: campagne.dateFin.toISOString(),
+      occurredAt: new Date().toISOString(),
+    });
+  }
+
 
 }

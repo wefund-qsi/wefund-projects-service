@@ -7,6 +7,8 @@ import { AppService } from './app.service';
 import { ProjectsModule } from './projects/projects.module';
 import { CampagnesModule } from './campagnes/campagnes.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+
 
 @Module({
   imports: [
@@ -42,6 +44,23 @@ import { ScheduleModule } from '@nestjs/schedule';
     ProjectsModule,
 
     CampagnesModule,
+
+    ClientsModule.register([
+      {
+        name: 'KafkaProducer',
+        transport: Transport.KAFKA,
+        options: {
+          client: {
+            clientId: 'wefund-projects-service',
+            brokers: ['redpanda:9092'],
+          },
+          consumer: {
+            groupId: 'wefund-projects-service-consumer',
+          },
+        },
+      },
+    ]),
+
   ],
   controllers: [AppController],
   providers: [AppService],
