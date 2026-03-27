@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Project } from '../domain/project.entity';
+import { Project } from '../infrastructure/project.entity';
 import { CreateProjectDto } from '../dto/create-project.dto';
 import { NotFoundException } from '@nestjs/common';
 

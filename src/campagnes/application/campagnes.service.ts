@@ -2,11 +2,11 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException, UnauthorizedException ,Logger} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, Repository, FindOptionsWhere } from 'typeorm';
-import { CampagneEntity, StatutCampagne } from '../domain/campagne.entity';
+import { CampagneEntity, StatutCampagne } from '../infrastructure/campagne.entity';
 import { CreateCampagneDto } from '../dto/create-campagne.dto';
 import { ProjectsService } from '../../projects/application/projects.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { NewsEntity } from '../domain/news.entity';
+import { NewsEntity } from '../infrastructure/news.entity';
 import { CreateNewsDto } from '../dto/create-news.dto';
 import { UpdateCampagneDto } from '../dto/update-campagne.dto';
 import { Inject, OnModuleInit } from '@nestjs/common';

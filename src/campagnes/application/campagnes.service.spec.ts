@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CampagnesService } from './campagnes.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { CampagneEntity, StatutCampagne } from '../domain/campagne.entity';
-import { NewsEntity } from '../domain/news.entity';
+import { CampagneEntity, StatutCampagne } from '../infrastructure/campagne.entity';
+import { NewsEntity } from '../infrastructure/news.entity';
 import { Repository } from 'typeorm';
 import { ProjectsService } from '../../projects/application/projects.service';
 import { NotFoundException, ForbiddenException } from '@nestjs/common';

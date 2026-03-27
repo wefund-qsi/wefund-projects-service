@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { Project } from '../../projects/domain/project.entity';
+import { Project } from '../../projects/infrastructure/project.entity';
 
 export enum StatutCampagne {
   BROUILLON = 'BROUILLON',
