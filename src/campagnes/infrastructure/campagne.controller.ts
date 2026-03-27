@@ -3,7 +3,7 @@ import { CampagnesService } from '../application/campagnes.service';
 import { CreateCampagneDto } from '../dto/create-campagne.dto';
 import { AuthGuard } from '../../auth/auth.guard';
 import { CreateNewsDto } from '../dto/create-news.dto';
-import { StatutCampagne } from '../infrastructure/campagne.entity';
+import { StatutCampagne } from '../domain/statut-campagne';
 import { UpdateCampagneDto } from '../dto/update-campagne.dto';
 
 

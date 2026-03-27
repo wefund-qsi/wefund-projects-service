@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CampagnesService } from './campagnes.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { CampagneEntity, StatutCampagne } from '../infrastructure/campagne.entity';
+import { CampagneEntity } from '../infrastructure/campagne.entity';
+import { StatutCampagne } from '../domain/statut-campagne';
 import { NewsEntity } from '../infrastructure/news.entity';
 import { Repository } from 'typeorm';
 import { ProjectsService } from '../../projects/application/projects.service';

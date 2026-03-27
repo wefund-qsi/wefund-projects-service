@@ -2,7 +2,10 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException, UnauthorizedException ,Logger} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, Repository, FindOptionsWhere } from 'typeorm';
-import { CampagneEntity, StatutCampagne } from '../infrastructure/campagne.entity';
+import { CampagneEntity} from '../infrastructure/campagne.entity';
+import { StatutCampagne } from '../domain/statut-campagne';
+import type { Campagne } from '../domain/campagne';
+import type { News } from '../domain/news';
 import { CreateCampagneDto } from '../dto/create-campagne.dto';
 import { ProjectsService } from '../../projects/application/projects.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -28,7 +31,7 @@ export class CampagnesService implements OnModuleInit {
     private readonly kafkaClient: ClientKafka,
   ) {}
 
-  async create(createCampagneDto: CreateCampagneDto, porteurId: string): Promise<CampagneEntity> {
+  async create(createCampagneDto: CreateCampagneDto, porteurId: string): Promise<Campagne> {
     const projet = await this.projectsService.findOne(createCampagneDto.projetId);
     if (!projet) {
       throw new NotFoundException(`Projet ${createCampagneDto.projetId} introuvable`);
@@ -51,15 +54,16 @@ export class CampagnesService implements OnModuleInit {
       montantCollecte: 0,
     });
 
-    return await this.campagneRepository.save(campagne);
+    const savedCampagne = await this.campagneRepository.save(campagne);
+    return this.toDomainCampagne(savedCampagne);
   }
 
   async update(
     id: string,
     updateCampagneDto: UpdateCampagneDto,
     porteurId: string,
-  ): Promise<CampagneEntity> {
-    const campagne = await this.findOne(id);
+  ): Promise<Campagne> {
+    const campagne = await this.requireCampagneEntity(id);
 
     if (campagne.porteurId !== porteurId) {
       throw new ForbiddenException(
@@ -89,11 +93,12 @@ export class CampagnesService implements OnModuleInit {
       campagne.dateFin = new Date(updateCampagneDto.dateFin);
     }
 
-    return await this.campagneRepository.save(campagne);
+    const savedCampagne = await this.campagneRepository.save(campagne);
+    return this.toDomainCampagne(savedCampagne);
   }
 
-  async submit(id: string, porteurId: string): Promise<CampagneEntity> {
-    const campagne = await this.findOne(id);
+  async submit(id: string, porteurId: string): Promise<Campagne> {
+    const campagne = await this.requireCampagneEntity(id);
 
     if (campagne.porteurId !== porteurId) {
       throw new ForbiddenException(
@@ -112,7 +117,7 @@ export class CampagnesService implements OnModuleInit {
 
     this.emitCampaignEvent('campaign.submitted', savedCampagne);
 
-    return savedCampagne;
+    return this.toDomainCampagne(savedCampagne);
   }
 
 
@@ -120,7 +125,7 @@ export class CampagnesService implements OnModuleInit {
   async findAll(
     projetId?: string,
     statut?: StatutCampagne,
-  ): Promise<CampagneEntity[]> {
+  ): Promise<Campagne[]> {
     const where: FindOptionsWhere<CampagneEntity> = {};
 
     if (projetId) {
@@ -131,14 +136,16 @@ export class CampagnesService implements OnModuleInit {
       where.statut = statut;
     }
 
-    return await this.campagneRepository.find({
+    const campagnes = await this.campagneRepository.find({
       where,
       relations: ['projet'],
       order: { createdAt: 'DESC' },
     });
+
+    return campagnes.map((campagne) => this.toDomainCampagne(campagne));
   }
 
-   async findOneDetailed(id: string): Promise<CampagneEntity> {
+  async findOneDetailed(id: string): Promise<Campagne> {
     const campagne = await this.campagneRepository.findOne({
       where: { id },
       relations: ['projet'],
@@ -148,12 +155,12 @@ export class CampagnesService implements OnModuleInit {
       throw new NotFoundException(`Campagne ${id} introuvable`);
     }
 
-    return campagne;
+    return this.toDomainCampagne(campagne);
   }
 
 
 
- @Cron(CronExpression.EVERY_10_SECONDS) 
+  @Cron(CronExpression.EVERY_10_SECONDS)
   async closeExpiredCampaigns(): Promise<void> {
     this.logger.log('Checking for expired campaigns...');
 
@@ -162,7 +169,7 @@ export class CampagnesService implements OnModuleInit {
     const campaignsToClose = await this.campagneRepository.find({
       where: {
         statut: StatutCampagne.ACTIVE,
-        dateFin: LessThanOrEqual(currentDate), 
+        dateFin: LessThanOrEqual(currentDate),
       },
     });
 
@@ -184,29 +191,26 @@ export class CampagnesService implements OnModuleInit {
         }
 
         await this.campagneRepository.save(campaign);
-        
+
         if (campaign.statut === StatutCampagne.REUSSIE) {
           this.emitCampaignEvent('campaign.closed.success', campaign);
         } else {
           this.emitCampaignEvent('campaign.closed.failed', campaign);
         }
       } catch (error) {
-        
+
         this.logger.error(`Error while closing campaign [${campaign.id}]`, error.stack);
       }
     }
   }
 
-  async findOne(id: string): Promise<CampagneEntity> {
-    const campagne = await this.campagneRepository.findOne({ where: { id } });
-    if (!campagne) {
-      throw new NotFoundException(`Campagne ${id} introuvable`);
-    }
-    return campagne;
+  async findOne(id: string): Promise<Campagne> {
+    const campagne = await this.requireCampagneEntity(id);
+    return this.toDomainCampagne(campagne);
   }
 
-  async getStatistiques(id: string, porteurId: string): Promise<object> {
-    const campagne = await this.findOne(id);
+  async getStatistiques(id: string, porteurId: string,): Promise<object> {
+    const campagne = await this.requireCampagneEntity(id);
 
     if (campagne.porteurId !== porteurId) {
       throw new UnauthorizedException('Accès refusé : cette campagne ne vous appartient pas');
@@ -215,8 +219,8 @@ export class CampagnesService implements OnModuleInit {
     const objectif = Number(campagne.objectif);
     const montantCollecte = Number(campagne.montantCollecte);
     const tauxCompletion = objectif > 0
-      ? Math.min(Math.round((montantCollecte / objectif) * 10000) / 100, 100)
-      : 0;
+        ? Math.min(Math.round((montantCollecte / objectif) * 10000) / 100, 100)
+        : 0;
 
     const maintenant = new Date();
     const joursRestants = Math.max(
@@ -228,8 +232,8 @@ export class CampagnesService implements OnModuleInit {
     // nombreContributeurs et evolutionJournaliere viendront du service contributions
     const nombreContributeurs = 0;
     const contributionMoyenne = nombreContributeurs > 0
-      ? Math.round((montantCollecte / nombreContributeurs) * 100) / 100
-      : 0;
+        ? Math.round((montantCollecte / nombreContributeurs) * 100) / 100
+        : 0;
 
     return {
       campagneId: campagne.id,
@@ -244,8 +248,8 @@ export class CampagnesService implements OnModuleInit {
     };
   }
 
-  async createNews(createNewsDto: CreateNewsDto, porteurId: string): Promise<NewsEntity> {
-    const campagne = await this.findOne(createNewsDto.campagneId);
+  async createNews(createNewsDto: CreateNewsDto, porteurId: string): Promise<News> {
+    const campagne = await this.requireCampagneEntity(createNewsDto.campagneId);
 
     if (campagne.porteurId !== porteurId) {
       throw new ForbiddenException('Vous n\'êtes pas autorisé à publier des actualités sur cette campagne');
@@ -257,20 +261,23 @@ export class CampagnesService implements OnModuleInit {
       campagneId: createNewsDto.campagneId,
     });
 
-    return await this.newsRepository.save(news);
+    const savedNews = await this.newsRepository.save(news);
+    return this.toDomainNews(savedNews);
   }
 
-  async getNewsForCampagne(campagneId: string): Promise<NewsEntity[]> {
-    const campagne = await this.findOne(campagneId);
+  async getNewsForCampagne(campagneId: string): Promise<News[]> {
+    await this.requireCampagneEntity(campagneId);
 
-    return await this.newsRepository.find({
+    const news = await this.newsRepository.find({
       where: { campagneId },
       order: { createdAt: 'DESC' },
     });
+
+    return news.map((item) => this.toDomainNews(item));
   }
 
-  async duplicate(id: string, porteurId: string): Promise<CampagneEntity> {
-    const campagne = await this.findOne(id);
+  async duplicate(id: string, porteurId: string): Promise<Campagne> {
+    const campagne = await this.requireCampagneEntity(id);
 
     if (campagne.porteurId !== porteurId) {
       throw new ForbiddenException(
@@ -301,11 +308,48 @@ export class CampagnesService implements OnModuleInit {
       projetId: campagne.projetId,
     });
 
-    return await this.campagneRepository.save(duplicatedCampagne);
+    const savedCampagne = await this.campagneRepository.save(duplicatedCampagne);
+    return this.toDomainCampagne(savedCampagne);
   }
 
-  async onModuleInit() {
+  async onModuleInit(): Promise<void> {
     await this.kafkaClient.connect();
+  }
+
+  private async requireCampagneEntity(id: string): Promise<CampagneEntity> {
+    const campagne = await this.campagneRepository.findOne({ where: { id } });
+
+    if (!campagne) {
+      throw new NotFoundException(`Campagne ${id} introuvable`);
+    }
+
+    return campagne;
+  }
+
+  private toDomainCampagne(entity: CampagneEntity): Campagne {
+    return {
+      id: entity.id,
+      titre: entity.titre,
+      description: entity.description,
+      objectif: Number(entity.objectif),
+      montantCollecte: Number(entity.montantCollecte),
+      dateFin: entity.dateFin,
+      statut: entity.statut,
+      porteurId: entity.porteurId,
+      projetId: entity.projetId,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+    };
+  }
+
+  private toDomainNews(entity: NewsEntity): News {
+    return {
+      id: entity.id,
+      titre: entity.titre,
+      contenu: entity.contenu,
+      campagneId: entity.campagneId,
+      createdAt: entity.createdAt,
+    };
   }
 
   private emitCampaignEvent(topic: string, campagne: CampagneEntity): void {
@@ -321,5 +365,5 @@ export class CampagnesService implements OnModuleInit {
     });
   }
 
-
+  
 }
