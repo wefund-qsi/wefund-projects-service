@@ -1,14 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Project } from '../../projects/infrastructure/project.entity';
+import { StatutCampagne } from '../domain/statut-campagne';
 
-export enum StatutCampagne {
-  BROUILLON = 'BROUILLON',
-  EN_ATTENTE = 'EN_ATTENTE',
-  ACTIVE = 'ACTIVE',
-  REUSSIE = 'REUSSIE',
-  ECHOUEE = 'ECHOUEE',
-  REFUSEE = 'REFUSEE'
-}
 
 @Entity('campagnes')
 export class CampagneEntity {
