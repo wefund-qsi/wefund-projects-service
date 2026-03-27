@@ -72,7 +72,7 @@ export class CampagnesController {
     return await this.campagnesService.getStatistiques(id, porteurId);
   }
 
-  @Post(':id/news')
+  @Post(':id/actualites')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.CREATED)
   async createNews(
@@ -85,7 +85,7 @@ export class CampagnesController {
     return await this.campagnesService.createNews(createNewsDto, porteurId);
   }
 
-  @Get(':id/news')
+  @Get(':id/actualites')
   @HttpCode(HttpStatus.OK)
   async getNewsForCampagne(
     @Param('id') campagneId: string,
