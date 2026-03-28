@@ -148,17 +148,19 @@ wefund-projects-service/
 
 Pour le détail des payloads (corps de requêtes) et des réponses, veuillez consulter le [Contrat d'API](./API_CONTRAT.md).
 
-| Méthode | Route                          | Description                       |
-|---------|--------------------------------|-----------------------------------|
-| `POST`  | `/projets`                     | Créer un projet                   |
-| `GET`   | `/projets`                     | Lister les projets                |
-| `GET`   | `/projets/:id`                 | Détail d'un projet                |
-| `DELETE`| `/projets/:id`                 | Supprimer un projet               |
-| `POST`  | `/campagnes`                   | Créer une campagne                |
-| `GET`   | `/campagnes`                   | Lister les campagnes              |
-| `GET`   | `/campagnes/:id`               | Détail d'une campagne             |
-| `PATCH` | `/campagnes/:id`               | Modifier une campagne (brouillon) |
-| `POST`  | `/campagnes/:id/dupliquer`     | Dupliquer une campagne terminée   |
-| `POST`  | `/campagnes/:id/actualites`    | Publier une actualité             |
-| `GET`   | `/campagnes/:id/actualites`    | Lister les actualités             |
-| `GET`   | `/campagnes/:id/stats`         | Statistiques d'une campagne       |
+| Méthode | Route                          | Description                                             |
+|---------|--------------------------------|-------------------------------------------------------- |                    
+| `POST`  | `/projets`                     | Créer un projet                                         |
+| `GET`   | `/projets`                     | Lister les projets                                      |
+| `GET`   | `/projets/:id`                 | Détail d'un projet                                      |
+| `DELETE`| `/projets/:id`                 | Supprimer un projet                                     |
+| `POST`  | `/campagnes`                   | Créer une campagne                                      |
+| `GET`   | `/campagnes`                   | Lister les campagnes                                    |
+| `GET`   | `/campagnes/:id`               | Détail d'une campagne                                   |
+| `PATCH` | `/campagnes/:id`               | Modifier une campagne (brouillon)                       |
+| `POST`  | `/campagnes/:id/dupliquer`     | Dupliquer une campagne terminée                         |
+| `POST`  | `/campagnes/:id/actualites`    | Publier une actualité                                   |
+| `GET`   | `/campagnes/:id/actualites`    | Lister les actualités                                   |
+| `GET`   | `/campagnes/:id/stats`         | Statistiques d'une campagne                             |
+| `PATCH  |`/campagnes/:id/moderation` 🔒  | Valider/Refuser une campagne(Admin)                     |
+| `POST`  |`	/campagnes/:id/soumettre`	 | Soumettre une campagne (Passe de BROUILLON à EN_ATTENTE)|
