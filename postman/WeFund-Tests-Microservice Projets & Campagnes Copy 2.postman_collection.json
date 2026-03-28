@@ -1,0 +1,561 @@
+{
+  "info": {
+    "_postman_id": "dd2852d0-8430-4b8b-a7cb-2af4baac8538",
+    "name": "WeFund-Tests-Microservice Projets & Campagnes Copy 2",
+    "description": "Collection pour tester l'API du microservice Projets & Campagnes (Port 3001)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "25628347",
+    "_collection_link": "https://go.postman.co/collection/25628347-dd2852d0-8430-4b8b-a7cb-2af4baac8538?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "ADMINISTRATEUR",
+      "item": [
+        {
+          "name": "Valider une Campagne (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"statut\": \"ACTIVE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/campagnes/{{campagneId}}/moderation",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "campagnes",
+                "{{campagneId}}",
+                "moderation"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refuser une Campagne (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMjIyMjIyMi0yMjIyLTQyMjItODIyMi0yMjIyMjIyMjIyMjIiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFETUlOSVNUUkFURVVSIiwiaWF0IjoxNzEwMDAwMDAwLCJleHAiOjE5MTAwMDAwMDB9.c_vzxBL0oQK_KeRTNEQWye2tQD36ChWd6Uz3vkHyX0g",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"statut\": \"REFUSEE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/campagnes/{{campagneId}}/moderation",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "campagnes",
+                "{{campagneId}}",
+                "moderation"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "USER",
+      "item": [
+        {
+          "name": "1. Projets",
+          "item": [
+            {
+              "name": "Créer un Projet",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.collectionVariables.set(\"projetId\", jsonData.id);",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMTExMTExMS0xMTExLTQxMTEtODExMS0xMTExMTExMTExMTEiLCJ1c2VybmFtZSI6ImFsaWNlIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MTAwMDAwMDAsImV4cCI6MTkxMDAwMDAwMH0.3sRKAinvEEvBir9S9W4nkSWoLVz-cRw2pEvrleIgzIw",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"titre\": \"creer projet test\",\n  \"description\": \"Une description détaillée de mon projet qui fait plus de 10 caractères.\",\n  \"photo\": \"https://example.com/photo-projet.jpg\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/projets",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "projets"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "2. Campagnes",
+          "item": [
+            {
+              "name": "Créer une Campagne (POST)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.collectionVariables.set(\"campagneId\", jsonData.id);",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMTExMTExMS0xMTExLTQxMTEtODExMS0xMTExMTExMTExMTEiLCJ1c2VybmFtZSI6ImFsaWNlIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MTAwMDAwMDAsImV4cCI6MTkxMDAwMDAwMH0.3sRKAinvEEvBir9S9W4nkSWoLVz-cRw2pEvrleIgzIw",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"titre\": \"Financement Phase 1\",\n  \"description\": \"Aidez-nous à lancer la production de notre premier prototype.\",\n  \"objectif\": 10000,\n  \"dateFin\": \"2027-12-31T23:59:59.999Z\",\n  \"projetId\": \"{{projetId}}\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/campagnes",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "campagnes"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Modifier une Campagne (PATCH)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMTExMTExMS0xMTExLTQxMTEtODExMS0xMTExMTExMTExMTEiLCJ1c2VybmFtZSI6ImFsaWNlIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MTAwMDAwMDAsImV4cCI6MTkxMDAwMDAwMH0.3sRKAinvEEvBir9S9W4nkSWoLVz-cRw2pEvrleIgzIw",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"objectif\": 15000,\n  \"titre\": \"Financement Phase 1 (Mise à jour)\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/campagnes/{{campagneId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "campagnes",
+                    "{{campagneId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Dupliquer une Campagne (POST)",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/campagnes/{{campagneId}}/dupliquer",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "campagnes",
+                    "{{campagneId}}",
+                    "dupliquer"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Soumettre une Campagne",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMTExMTExMS0xMTExLTQxMTEtODExMS0xMTExMTExMTExMTEiLCJ1c2VybmFtZSI6ImFsaWNlIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MTAwMDAwMDAsImV4cCI6MTkxMDAwMDAwMH0.3sRKAinvEEvBir9S9W4nkSWoLVz-cRw2pEvrleIgzIw",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/campagnes/{{campagneId}}/soumettre",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "campagnes",
+                    "{{campagneId}}",
+                    "soumettre"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "3. Actualités",
+          "item": [
+            {
+              "name": "Publier une Actualité (POST)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMTExMTExMS0xMTExLTQxMTEtODExMS0xMTExMTExMTExMTEiLCJ1c2VybmFtZSI6ImFsaWNlIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MTAwMDAwMDAsImV4cCI6MTkxMDAwMDAwMH0.3sRKAinvEEvBir9S9W4nkSWoLVz-cRw2pEvrleIgzIw",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"titre\": \"soumiiiiiiiis\",\n  \"contenu\": \"Merci à tous pour votre soutien incroyable, on continue !\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/campagnes/{{campagneId}}/actualites",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "campagnes",
+                    "{{campagneId}}",
+                    "actualites"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "4. Statistiques & Système",
+          "item": [
+            {
+              "name": "Consulter les Statistiques (GET)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMTExMTExMS0xMTExLTQxMTEtODExMS0xMTExMTExMTExMTEiLCJ1c2VybmFtZSI6ImFsaWNlIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MTAwMDAwMDAsImV4cCI6MTkxMDAwMDAwMH0.3sRKAinvEEvBir9S9W4nkSWoLVz-cRw2pEvrleIgzIw",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/campagnes/{{campagneId}}/stats",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "campagnes",
+                    "{{campagneId}}",
+                    "stats"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ALL",
+      "item": [
+        {
+          "name": "1. Projets",
+          "item": [
+            {
+              "name": "Lister les Projets",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/projets",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "projets"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Détail d'un Projet",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/projets/{{projetId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "projets",
+                    "{{projetId}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "2. Campagnes",
+          "item": [
+            {
+              "name": "Lister les Campagnes (GET)",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/campagnes",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "campagnes"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Détail d'une Campagne (GET)",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/campagnes/{{campagneId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "campagnes",
+                    "{{campagneId}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "3. Actualités",
+          "item": [
+            {
+              "name": "Lister les Actualités d'une Campagne (GET)",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/campagnes/{{campagneId}}/actualites",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "campagnes",
+                    "{{campagneId}}",
+                    "actualites"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwtToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001"
+    },
+    {
+      "key": "jwtToken",
+      "value": "COLLE_TON_TOKEN_ICI"
+    },
+    {
+      "key": "projetId",
+      "value": "A_REMPLIR_OU_AUTOMATIQUE"
+    },
+    {
+      "key": "campagneId",
+      "value": "A_REMPLIR_OU_AUTOMATIQUE"
+    }
+  ]
+}
