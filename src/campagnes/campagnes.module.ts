@@ -3,8 +3,8 @@ import { CampagnesController } from './infrastructure/campagne.controller';
 import { CampagnesService } from './application/campagnes.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectsModule } from '../projects/projects.module';
-import { CampagneEntity } from './domain/campagne.entity';
-import { NewsEntity } from './domain/news.entity';
+import { CampagneEntity } from './infrastructure/campagne.entity';
+import { NewsEntity } from './infrastructure/news.entity';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
 

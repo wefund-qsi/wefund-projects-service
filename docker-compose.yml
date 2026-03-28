@@ -39,7 +39,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      JWT_SECRET: cle-demo-123
+      JWT_SECRET: changeme
     depends_on:
       postgres:
         condition: service_healthy

@@ -3,8 +3,10 @@ import { CampagnesService } from '../application/campagnes.service';
 import { CreateCampagneDto } from '../dto/create-campagne.dto';
 import { AuthGuard } from '../../auth/auth.guard';
 import { CreateNewsDto } from '../dto/create-news.dto';
-import { StatutCampagne } from '../domain/campagne.entity';
+import { StatutCampagne } from '../domain/statut-campagne';
 import { UpdateCampagneDto } from '../dto/update-campagne.dto';
+import type { Campagne } from '../domain/campagne';
+import type { News } from '../domain/news';
 
 
 @Controller('campagnes')
@@ -17,7 +19,7 @@ export class CampagnesController {
   async create(
     @Body() createCampagneDto: CreateCampagneDto,
     @Request() req: any,
-  ): Promise<any> {
+  ): Promise<Campagne> {
     const porteurId = req.user.sub;
     return await this.campagnesService.create(createCampagneDto, porteurId);
   }
@@ -27,13 +29,13 @@ export class CampagnesController {
   async findAll(
     @Query('projetId') projetId?: string,
     @Query('statut') statut?: StatutCampagne,
-  ): Promise<any> {
+  ): Promise<Campagne[]> {
     return await this.campagnesService.findAll(projetId, statut);
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async findOne(@Param('id') id: string): Promise<any> {
+  async findOne(@Param('id') id: string): Promise<Campagne> {
     return await this.campagnesService.findOneDetailed(id);
   }
 
@@ -44,52 +46,52 @@ export class CampagnesController {
     @Param('id') id: string,
     @Body() updateCampagneDto: UpdateCampagneDto,
     @Request() req: any,
-  ): Promise<any> {
+  ): Promise<Campagne> {
     const porteurId = req.user.sub;
     return await this.campagnesService.update(id, updateCampagneDto, porteurId);
   }
-  
+
   @Post(':id/soumettre')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   async submit(
     @Param('id') id: string,
     @Request() req: any,
-  ): Promise<any> {
+  ): Promise<Campagne> {
     const porteurId = req.user.sub;
     return await this.campagnesService.submit(id, porteurId);
   }
 
-
+  
   @Get(':id/stats')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   async getStatistiques(
     @Param('id') id: string,
     @Request() req: any,
-  ): Promise<any> {
+  ): Promise<object> {
     const porteurId = req.user.sub;
     return await this.campagnesService.getStatistiques(id, porteurId);
   }
 
-  @Post(':id/news')
+  @Post(':id/actualites')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.CREATED)
   async createNews(
     @Param('id') campagneId: string,
     @Body() createNewsDto: CreateNewsDto,
     @Request() req: any,
-  ): Promise<any> {
+  ): Promise<News> {
     const porteurId = req.user.sub;
     createNewsDto.campagneId = campagneId;
     return await this.campagnesService.createNews(createNewsDto, porteurId);
   }
 
-  @Get(':id/news')
+  @Get(':id/actualites')
   @HttpCode(HttpStatus.OK)
   async getNewsForCampagne(
     @Param('id') campagneId: string,
-  ): Promise<any> {
+  ): Promise<News[]> {
     return await this.campagnesService.getNewsForCampagne(campagneId);
   }
 
@@ -99,9 +101,8 @@ export class CampagnesController {
   async duplicate(
     @Param('id') id: string,
     @Request() req: any,
-  ): Promise<any> {
+  ): Promise<Campagne> {
     const porteurId = req.user.sub;
     return await this.campagnesService.duplicate(id, porteurId);
   }
-
 }

@@ -1,14 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { Project } from '../../projects/domain/project.entity';
+import { ProjectEntity } from '../../projects/infrastructure/project.entity';
+import { StatutCampagne } from '../domain/statut-campagne';
 
-export enum StatutCampagne {
-  BROUILLON = 'BROUILLON',
-  EN_ATTENTE = 'EN_ATTENTE',
-  ACTIVE = 'ACTIVE',
-  REUSSIE = 'REUSSIE',
-  ECHOUEE = 'ECHOUEE',
-  REFUSEE = 'REFUSEE'
-}
 
 @Entity('campagnes')
 export class CampagneEntity {
@@ -39,9 +32,9 @@ export class CampagneEntity {
   @Column()
   projetId: string;
 
-  @ManyToOne(() => Project, { onDelete: 'CASCADE' })
+  @ManyToOne(() => ProjectEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'projetId' })
-  projet: Project;
+  projet: ProjectEntity;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

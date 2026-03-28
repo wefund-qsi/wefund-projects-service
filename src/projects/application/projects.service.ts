@@ -1,47 +1,56 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Project } from '../domain/project.entity';
+import { ProjectEntity } from '../infrastructure/project.entity';
+import type { Project } from '../domain/project';
 import { CreateProjectDto } from '../dto/create-project.dto';
-import { NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class ProjectsService {
   constructor(
-    @InjectRepository(Project)
-    private readonly projectRepository: Repository<Project>,
+    @InjectRepository(ProjectEntity)
+    private readonly projectRepository: Repository<ProjectEntity>,
   ) {}
 
   async create(createProjectDto: CreateProjectDto, porteurId: string): Promise<Project> {
     const project = this.projectRepository.create({
       ...createProjectDto,
-      porteurId, 
+      porteurId,
     });
-    return await this.projectRepository.save(project);
+
+    const savedProject = await this.projectRepository.save(project);
+    return this.toDomainProject(savedProject);
   }
 
   async findAll(): Promise<Project[]> {
-  return await this.projectRepository.find({
-    order: { createdAt: 'DESC' }
+    const projects = await this.projectRepository.find({
+      order: { createdAt: 'DESC' },
     });
+
+    return projects.map((project) => this.toDomainProject(project));
   }
 
   async findOne(id: string): Promise<Project> {
-  const project = await this.projectRepository.findOne({
-    where: { id }
-  });
-  
-  if (!project) {
-    throw new NotFoundException(`Projet ${id} non trouvé`);
-  }
-  return project;
+    const project = await this.projectRepository.findOne({
+      where: { id },
+    });
+
+    if (!project) {
+      throw new NotFoundException(`Projet ${id} non trouvé`);
+    }
+
+    return this.toDomainProject(project);
   }
 
-  async remove(id: string): Promise<void> {
-  const result = await this.projectRepository.delete({ id });
-  
-  if (result.affected === 0) {
-    throw new NotFoundException(`Projet ${id} non trouvé`);
+  private toDomainProject(entity: ProjectEntity): Project {
+    return {
+      id: entity.id,
+      titre: entity.titre,
+      description: entity.description,
+      photo: entity.photo,
+      porteurId: entity.porteurId,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+    };
   }
-}
 }

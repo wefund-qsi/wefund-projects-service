@@ -1,0 +1,9 @@
+export enum StatutCampagne {
+  BROUILLON = 'BROUILLON',
+  EN_ATTENTE = 'EN_ATTENTE',
+  ACTIVE = 'ACTIVE',
+  REUSSIE = 'REUSSIE',
+  ECHOUEE = 'ECHOUEE',
+  REFUSEE = 'REFUSEE',
+}
+

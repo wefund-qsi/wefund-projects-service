@@ -3,7 +3,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Project } from '../domain/project.entity';
+import { Project } from '../infrastructure/project.entity';
 import { ProjectsService } from './projects.service';
 import { NotFoundException } from '@nestjs/common';
 import { CreateProjectDto } from '../dto/create-project.dto';
