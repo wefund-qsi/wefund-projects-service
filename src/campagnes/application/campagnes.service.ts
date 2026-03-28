@@ -1,8 +1,8 @@
 
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException, UnauthorizedException ,Logger} from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException, UnauthorizedException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, Repository, FindOptionsWhere } from 'typeorm';
-import { CampagneEntity} from '../infrastructure/campagne.entity';
+import { CampagneEntity } from '../infrastructure/campagne.entity';
 import { StatutCampagne } from '../domain/statut-campagne';
 import type { Campagne } from '../domain/campagne';
 import type { News } from '../domain/news';
@@ -29,7 +29,7 @@ export class CampagnesService implements OnModuleInit {
     private readonly projectsService: ProjectsService,
     @Inject('KafkaProducer')
     private readonly kafkaClient: ClientKafka,
-  ) {}
+  ) { }
 
   async create(createCampagneDto: CreateCampagneDto, porteurId: string): Promise<Campagne> {
     const projet = await this.projectsService.findOne(createCampagneDto.projetId);
@@ -116,6 +116,23 @@ export class CampagnesService implements OnModuleInit {
     const savedCampagne = await this.campagneRepository.save(campagne);
 
     this.emitCampaignEvent('campaign.submitted', savedCampagne);
+
+    return this.toDomainCampagne(savedCampagne);
+  }
+
+  async moderate(id: string, nouveauStatut: StatutCampagne): Promise<Campagne> {
+    const campagne = await this.requireCampagneEntity(id);
+
+    if (campagne.statut !== StatutCampagne.EN_ATTENTE) {
+      throw new BadRequestException(
+        `Impossible de modérer cette campagne. Son statut actuel est : ${campagne.statut}. Elle doit être EN_ATTENTE.`,
+      );
+    }
+
+    campagne.statut = nouveauStatut;
+    const savedCampagne = await this.campagneRepository.save(campagne);
+
+    this.emitCampaignEvent('campaign.moderated', savedCampagne);
 
     return this.toDomainCampagne(savedCampagne);
   }
@@ -219,8 +236,8 @@ export class CampagnesService implements OnModuleInit {
     const objectif = Number(campagne.objectif);
     const montantCollecte = Number(campagne.montantCollecte);
     const tauxCompletion = objectif > 0
-        ? Math.min(Math.round((montantCollecte / objectif) * 10000) / 100, 100)
-        : 0;
+      ? Math.min(Math.round((montantCollecte / objectif) * 10000) / 100, 100)
+      : 0;
 
     const maintenant = new Date();
     const joursRestants = Math.max(
@@ -232,8 +249,8 @@ export class CampagnesService implements OnModuleInit {
     // nombreContributeurs et evolutionJournaliere viendront du service contributions
     const nombreContributeurs = 0;
     const contributionMoyenne = nombreContributeurs > 0
-        ? Math.round((montantCollecte / nombreContributeurs) * 100) / 100
-        : 0;
+      ? Math.round((montantCollecte / nombreContributeurs) * 100) / 100
+      : 0;
 
     return {
       campagneId: campagne.id,
@@ -353,7 +370,7 @@ export class CampagnesService implements OnModuleInit {
   }
 
   private emitCampaignEvent(topic: string, campagne: CampagneEntity): void {
-    this.kafkaClient.emit(topic, {
+    const payload = {
       campagneId: campagne.id,
       projetId: campagne.projetId,
       porteurId: campagne.porteurId,
@@ -362,8 +379,15 @@ export class CampagnesService implements OnModuleInit {
       montantCollecte: Number(campagne.montantCollecte),
       dateFin: campagne.dateFin.toISOString(),
       occurredAt: new Date().toISOString(),
+    };
+
+    this.kafkaClient.emit(topic, payload).subscribe({
+      next: () => this.logger.log(`📢 Événement Kafka envoyé : ${topic} (Campagne ${campagne.id})`),
+      error: (err) => this.logger.error(`❌ Erreur d'envoi Kafka pour ${topic}`, err),
     });
   }
 
-  
 }
+
+
+
