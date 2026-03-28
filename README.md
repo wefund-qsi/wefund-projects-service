@@ -47,8 +47,8 @@ Les routes `GET` publiques (liste et détail des projets/campagnes) sont accessi
 
 - [x] **RG1 — Une campagne possède au minimum : titre, description, objectif financier, date de fin, porteur identifié** 
 - [x] **RG2 — Un projet possède au minimum : titre, description, photo** 
-- [ ] RG3 — Une campagne ne peut plus être modifiée après publication
-- [x] RG4 — Statuts possibles : `BROUILLON`, `EN_ATTENTE`, `ACTIVE`, `REUSSIE`, `ECHOUEE`, `REFUSEE`
+- [x] **RG3 — Une campagne ne peut plus être modifiée après publication**
+- [x] **RG4 — Statuts possibles : `BROUILLON`, `EN_ATTENTE`, `ACTIVE`, `REUSSIE`, `ECHOUEE`, `REFUSEE`**
 
 ---
 
@@ -121,6 +121,7 @@ wefund-projects-service/
 │   │   ├── dto/                     # DTOs et validation
 │   │   │   └── create-campagne.dto.ts
 │   │   │   └── update-campagne.dto.ts
+│   │   │   └── moderate-campagne.dto.ts
 │   │   ├── infrastructure/          # Contrôleurs / points d’entrée
 │   │   │   └── campagne.controller.ts
 │   │   └── campagnes.module.ts
