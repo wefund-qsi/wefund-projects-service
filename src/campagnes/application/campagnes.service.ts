@@ -265,22 +265,22 @@ export class CampagnesService implements OnModuleInit {
     };
   }
 
-  async createNews(createNewsDto: CreateNewsDto, porteurId: string): Promise<News> {
-    const campagne = await this.requireCampagneEntity(createNewsDto.campagneId);
+  async createNews(createNewsDto: CreateNewsDto, porteurId: string, campagneId: string): Promise<News> {
+  const campagne = await this.requireCampagneEntity(campagneId);
 
-    if (campagne.porteurId !== porteurId) {
-      throw new ForbiddenException('Vous n\'êtes pas autorisé à publier des actualités sur cette campagne');
-    }
-
-    const news = this.newsRepository.create({
-      titre: createNewsDto.titre,
-      contenu: createNewsDto.contenu,
-      campagneId: createNewsDto.campagneId,
-    });
-
-    const savedNews = await this.newsRepository.save(news);
-    return this.toDomainNews(savedNews);
+  if (campagne.porteurId !== porteurId) {
+    throw new ForbiddenException('Vous n\'êtes pas autorisé à publier des actualités sur cette campagne');
   }
+
+  const news = this.newsRepository.create({
+    titre: createNewsDto.titre,
+    contenu: createNewsDto.contenu,
+    campagneId,
+  });
+
+  const savedNews = await this.newsRepository.save(news);
+  return this.toDomainNews(savedNews);
+}
 
   async getNewsForCampagne(campagneId: string): Promise<News[]> {
     await this.requireCampagneEntity(campagneId);

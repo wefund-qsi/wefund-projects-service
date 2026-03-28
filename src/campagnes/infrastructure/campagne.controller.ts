@@ -84,8 +84,7 @@ export class CampagnesController {
     @Request() req: any,
   ): Promise<News> {
     const porteurId = req.user.sub;
-    createNewsDto.campagneId = campagneId;
-    return await this.campagnesService.createNews(createNewsDto, porteurId);
+    return await this.campagnesService.createNews(createNewsDto, porteurId, campagneId);
   }
 
   @Get(':id/actualites')
