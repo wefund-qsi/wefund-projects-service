@@ -2,8 +2,7 @@
 
 ## Ressource : Projets
 
-### `PUT /projets` 🔒
-> Crée un nouveau projet. **Rôle requis : PORTEUR**
+### `POST /projets` 
 > Story 1 : En tant que porteur de projet, je peux créer un projet.
 
 **Corps de la requête**
@@ -47,8 +46,7 @@
 | `ECHOUEE`    | Échéance dépassée sans avoir atteint l'objectif |
 | `REFUSEE`    | Refusée par l'administrateur                    |
 
-### `POST /campagnes` 🔒
-> Crée une campagne pour un projet existant. **Rôle requis : PORTEUR**
+### `POST /campagnes` 
 > Story 2 : En tant que porteur de projet, je peux créer une campagne de financement.
 
 **Corps de la requête**
@@ -157,8 +155,8 @@
 **Erreurs possibles**
 - `404`, Campagne introuvable 
 
-### `PATCH /campagnes/:id` 🔒
-> Modifie une campagne. **Uniquement si statut = `BROUILLON`. Rôle requis : PORTEUR (propriétaire)**
+### `PATCH /campagnes/:id` 
+> Modifie une campagne. **Uniquement si statut = `BROUILLON`.**
 > Story 3 : En tant que porteur de projet, je peux modifier une campagne tant qu'elle n'est pas validée.
 
 **Corps de la requête** — tous les champs sont optionnels
@@ -182,9 +180,77 @@
 - `403`, Non propriétaire **ou** campagne hors statut `BROUILLON` 
 - `404`, Campagne introuvable                                     
 
-### `POST /campagnes/:id/dupliquer` 🔒
+### `PATCH /campagnes/:id/moderation` 🔒
+> Valide ou refuse une campagne en attente. **Réservé aux administrateurs.**
+> Émet l'événement Kafka `campaign.moderated`.
+
+**Corps de la requête**
+
+```json
+{
+  "statut": "ACTIVE"  // string, requis. Valeurs possibles : "ACTIVE" ou "REFUSEE"
+}
+```
+
+**Réponse `201 OK`** — campagne complète mise à jour 
+
+```json
+{
+    "id": "a3df935d-385e-46d1-afa2-b5c7a80719e9",
+    "titre": "Financement Phase 3",
+    "description": "Aidez-nous à lancer la production de notre premier prototype.",
+    "objectif": 10000,
+    "montantCollecte": 0,
+    "dateFin": "2027-12-31T23:59:59.999Z",
+    "statut": "ACTIVE",
+    "porteurId": "1234567890",
+    "projetId": "67de90ac-3b2c-49fc-8d41-242ca1cd2985",
+    "createdAt": "2026-03-28T14:09:18.018Z",
+    "updatedAt": "2026-03-28T14:09:40.782Z"
+}
+```
+**Erreurs possibles**
+-400, La campagne n'est pas au statut EN_ATTENTE ou le statut soumis est invalide
+-401, Non authentifié
+-403, Accès refusé : Le rôle de l'utilisateur n'est pas ADMINISTRATEUR
+-404, Campagne introuvable
+
+### `POST /campagnes/:id/soumettre` 
+> Soumet une campagne en brouillon pour validation par l'administrateur.
+> Le statut de la campagne passe de `BROUILLON` à `EN_ATTENTE`. 
+> **Action :** Émet l'événement Kafka `campaign.submitted`.
+
+**Corps de la requête** — vide
+
+```json
+{}
+```
+
+**Réponse `201 OK`** — campagne complète mise à jour 
+
+```json
+{
+  "id": "cm3d4e5f6g7h8i9j0k1l2m3n4",
+  "titre": "Financement pour mon projet innovant",
+  "description": "Aidez-nous à lancer notre produit...",
+  "objectif": 5000,
+  "montantCollecte": 0,
+  "dateFin": "2026-06-30T23:59:59.999Z",
+  "statut": "EN_ATTENTE",
+  "idPorteur": "cm9x8y7z6w5v4u3t2s1r0q",
+  "idProjet": "cm1q2r3s4t5u6v7w8x9y0z1a2",
+  "dateCreation": "2026-03-03T11:00:00.000Z",
+  "dateMiseAJour": "2026-03-28T14:20:00.000Z"
+}
+```
+**Erreurs possibles**
+-400, La campagne n'est pas au statut BROUILLON (déjà soumise ou terminée)
+-401, Non authentifié
+-403, Accès refusé : Vous n'êtes pas le propriétaire de cette campagne
+-404, Campagne introuvable
+
+### `POST /campagnes/:id/dupliquer` 
 > Duplique une campagne terminée en un nouveau brouillon.  
-> **Rôle requis : PORTEUR (propriétaire)**
 > Story 8 : En tant que porteur de projet, je peux dupliquer une campagne terminée.
 
 **Conditions :** la campagne doit être en statut `REUSSIE` ou `ECHOUEE`.
@@ -210,8 +276,8 @@
 
 ## Ressource : Actualités
 
-### `POST /campagnes/:campagneId/actualites` 🔒
-> Publie une actualité sur une campagne. **Rôle requis : PORTEUR (propriétaire)**
+### `POST /campagnes/:campagneId/actualites` 
+> Publie une actualité sur une campagne. 
 > Story 6 : En tant que porteur de projet, je peux publier des actualités sur ma campagne.
 
 **Corps de la requête**
@@ -264,8 +330,8 @@
 
 ## Ressource : Statistiques
 
-### `GET /statistiques/campagnes/:id` 🔒
-> Statistiques détaillées d'une campagne. **Rôle requis : PORTEUR (propriétaire) ou ADMIN**
+### `GET /campagnes/:id/stats
+> Statistiques détaillées d'une campagne. 
 > Story 7 : En tant que porteur de projet, je peux consulter les statistiques de ma campagne.
 
 **Réponse `200 OK`**
@@ -294,31 +360,7 @@
 - `404`, Campagne introuvable 
 
 
-### POST /system/cloturer-campagnes
-> Clôture automatiquement les campagnes dont la date de fin est dépassée.
-> Appel interne (cron job)
-> Story 5 : En tant que système, je peux clôturer automatiquement une campagne
 
-**Réponse `200 OK`**
-
-```json
-{
-  "traitees": 5,
-  "reussies": 2,
-  "echouees": 3,
-  "details": [
-    {
-      "id": "cm3d4e5f6g7h8i9j0k1l2m3n4",
-      "statut": "REUSSIE",
-      "montantCollecte": 5250
-    },
-    {
-      "id": "cm5f6g7h8i9j0k1l2m3n4o5p6",
-      "statut": "ECHOUEE",
-      "montantCollecte": 3200
-    }
-  ]
-}
 ```
 
 
