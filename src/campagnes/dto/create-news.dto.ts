@@ -9,8 +9,4 @@ export class CreateNewsDto {
   @IsString()
   @IsNotEmpty()
   contenu: string;
-
-  @IsString()
-  @IsNotEmpty()
-  campagneId: string;
 }

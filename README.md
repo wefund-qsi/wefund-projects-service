@@ -47,8 +47,8 @@ Les routes `GET` publiques (liste et détail des projets/campagnes) sont accessi
 
 - [x] **RG1 — Une campagne possède au minimum : titre, description, objectif financier, date de fin, porteur identifié** 
 - [x] **RG2 — Un projet possède au minimum : titre, description, photo** 
-- [ ] RG3 — Une campagne ne peut plus être modifiée après publication
-- [x] RG4 — Statuts possibles : `BROUILLON`, `EN_ATTENTE`, `ACTIVE`, `REUSSIE`, `ECHOUEE`, `REFUSEE`
+- [x] **RG3 — Une campagne ne peut plus être modifiée après publication**
+- [x] **RG4 — Statuts possibles : `BROUILLON`, `EN_ATTENTE`, `ACTIVE`, `REUSSIE`, `ECHOUEE`, `REFUSEE`**
 
 ---
 
@@ -191,5 +191,5 @@ Pour le détail des payloads (corps de requêtes) et des réponses, veuillez con
 | `POST`  | `/campagnes/:id/actualites`    | Publier une actualité                                   |
 | `GET`   | `/campagnes/:id/actualites`    | Lister les actualités                                   |
 | `GET`   | `/campagnes/:id/stats`         | Statistiques d'une campagne                             |
-| `PATCH`  |`/campagnes/:id/moderation` 🔒  | Valider/Refuser une campagne(Admin)                     |
+| `PATCH`  |`/campagnes/:id/moderation` 🔒  | Valider/Refuser une campagne(Admin)                    |
 | `POST`  |`	/campagnes/:id/soumettre`	 | Soumettre une campagne (Passe de BROUILLON à EN_ATTENTE)|
