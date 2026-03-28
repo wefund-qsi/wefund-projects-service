@@ -170,7 +170,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"titre\": \"Financement Phase 1\",\n  \"description\": \"Aidez-nous à lancer la production de notre premier prototype.\",\n  \"objectif\": 10000,\n  \"dateFin\": \"2027-12-31T23:59:59.999Z\",\n  \"idProjet\": \"{{projetId}}\"\n}"
+              "raw": "{\n  \"titre\": \"Financement Phase 1\",\n  \"description\": \"Aidez-nous à lancer la production de notre premier prototype.\",\n  \"objectif\": 10000,\n  \"dateFin\": \"2027-12-31T23:59:59.999Z\",\n  \"projetId\": \"{{projetId}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/campagnes",
@@ -397,6 +397,67 @@
                 "statistiques",
                 "campagnes",
                 "{{campagneId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Administration",
+      "item": [
+        {
+          "name": "Valider une Campagne (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"statut\": \"ACTIVE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/campagnes/{{campagneId}}/moderation",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "campagnes",
+                "{{campagneId}}",
+                "moderation"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refuser une Campagne (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"statut\": \"REFUSEE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/campagnes/{{campagneId}}/moderation",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "campagnes",
+                "{{campagneId}}",
+                "moderation"
               ]
             }
           },
